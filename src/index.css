@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600;700;800&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+h2 {
+  font-style: italic;
+}
+
+* {
+  font-family: 'Readex Pro', sans-serif;
+}
+
+.login-button {
+  color: rgb(255,255,255);
+  text-transform: uppercase;
+  font-size: 15px;
+  background: linear-gradient(45deg, rgb(254, 48, 114), rgb(255, 89, 64));
+  padding: 12px 30px;
+  border-radius: 30px;
+  border: none;
+}
+
+.primary-button:hover {
+  background: linear-gradient(260deg, rgb(254, 48, 114), rgb(255, 89, 64));
+}
+nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+nav .nav-button {
+  margin-top: 150px;
+  height: min-content;
+  color: rgb(254, 48, 114);
+  background-color: rgb(242, 242, 242);
+  font-size: 20px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+}
+
+nav .nav-button:disabled {
+  background-color: rgb(181, 180, 180);
+  color: rgb(189, 42, 90);
+}
+
+nav .logo-container {
+  width: 200px;
+  margin: 15px;
+}
+
+nav .logo-container .logo {
+  width: 100%;
+}
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+}
+
+.register-form label {
+  margin-bottom: 5px;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.register-form input[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.register-form input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+.register-form input[type="submit"]:focus {
+  outline: none;
+}
+.overlay {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.65) 0%,
+          rgba(0, 0, 0, 0) 100%
+  ), url("images/background.jpg")
+}
+.overlay h1{
+  color: rgb(255, 255, 255);
+}
+.notification {
+  font-weight: bold;
+  background-color: #f8f8f8;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
