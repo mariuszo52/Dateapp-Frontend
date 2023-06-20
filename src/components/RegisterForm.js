@@ -2,7 +2,9 @@ import axios from 'axios';
 import {useState} from "react";
 import {useNavigate} from 'react-router-dom'
 
+
 function RegisterForm({csrfToken}) {
+
     const [message, setMessage] = useState(null);
     const [formData, setFormData] = useState({
         email: "",
@@ -15,7 +17,11 @@ function RegisterForm({csrfToken}) {
         try {
             const response = await axios.post('http://localhost:8080/register', formData);
             const success = response.status === 201
-            if (success) navigate('/login')
+            if (success) {
+                console.log("response".concat(response.data))
+                navigate('/info', { state: { userId: response.data} });
+
+            }
         } catch (err) {
             setMessage(err.response.data)
             console.log(message);

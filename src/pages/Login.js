@@ -15,7 +15,7 @@ function Login() {
                 if(success) {
                     sessionStorage.setItem('jwtToken', response.data);
                     console.log(sessionStorage.getItem('jwtToken'));
-                    window.location.href="/info";
+                    window.location.href="/dashboard";
                 }
             } catch (error) {
                 console.error(error);
