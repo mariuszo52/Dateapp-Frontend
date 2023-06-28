@@ -1,11 +1,13 @@
 import {  useState } from "react";
 import axios from "axios";
+import {useCookies} from "react-cookie";
 
 function Login() {
     const [credentials, setCredentials] = useState({
         email: "",
         password: "",
     });
+    const [, setCookies] = useCookies();
     const jwtToken = sessionStorage.getItem('jwtToken');
         const handleSubmit = async (event) => {
             event.preventDefault();
@@ -13,8 +15,9 @@ function Login() {
                 const response = await axios.post('http://localhost:8080/login', credentials);
                 let success = response.status === 200;
                 if(success) {
-                    sessionStorage.setItem('jwtToken', response.data);
-                    console.log(sessionStorage.getItem('jwtToken'));
+                    const data = response.data;
+                    setCookies("LoggedUserId", data.userId);
+                    sessionStorage.setItem('jwtToken', 'Bearer '.concat(data.jwt));
                     window.location.href="/dashboard";
                 }
             } catch (error) {

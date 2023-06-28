@@ -3,6 +3,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
   text-align: center;
 }
 
@@ -189,4 +190,164 @@ nav .logo-container .logo {
 
 .onboarding form .photo-container img {
   width: 100%
+}
+.chat-container {
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.05) 0 6px 24px 0,
+  rgba(0, 0, 0, 0.08) 0 0 0 1px;
+  width: 30%;
+  text-align: left;
+  z-index: 1;
+}
+
+.chat-container .chat-container-header {
+  background: linear-gradient(45deg, rgb(254, 48, 114), rgb(255, 89, 64));
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-container .option {
+  border: none;
+  background-color: rgb(255, 255, 255);
+  border-bottom: solid 4px rgb(243, 33, 33);
+  font-size: 20px;
+  margin: 2px;
+  padding: 10px;
+}
+.dashboard {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  background-image: url("images/background.jpg");
+}
+.user-panel{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+}
+
+.profile{
+  display: flex;
+  flex-direction: row;
+  background-color: darkgoldenrod;
+  height: 120px;
+  align-items: center;
+}
+.profile img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  padding: 10px 10px 10px 10px;
+  }
+.change-section{
+  display: flex;
+  background-color: black;
+  height: 100px;
+}
+.section-button {
+  display: inline-block;
+  margin: 5px 5px 5px 5px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.section-button:hover {
+  background-color: #333;
+}
+.matches{
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+  text-align: left;
+  overflow-y: auto;
+}
+.matches ul{
+  list-style: none;
+  position: relative;
+  white-space: normal;
+  padding-left: 0;
+}
+.matches .match-card{
+  position: relative;
+  display: inline-block;
+  width: 100px;
+  height: 150px;
+  padding: 5px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  background-size: cover;
+  background-image: url("images/ajahn.jpg");
+  white-space: normal;
+  border-radius: 10%;
+}
+.matches span{
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  bottom: 0;
+  left: 3px;
+  padding: 2px;
+}
+.card-container {
+  width: 70%;
+  height: 650px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+
+.dashboard .swipe-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.swipe {
+  position: absolute;
+}
+
+
+.card {
+  width: 400px;
+  height: 650px;
+  border-radius: 30px;
+  background-size: cover;
+  background-position: center;
+}
+
+.card h2 {
+  font-size: 45px;
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  bottom: 100px;
+  left: 20px;
+}
+
+.card p {
+font-size: 35px;
+  color: white;
+}
+
+.dashboard .swipe-info {
+  position: absolute;
+  bottom: 0;
+  padding: 10px;
 }

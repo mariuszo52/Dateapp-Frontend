@@ -1,11 +1,13 @@
 import axios from 'axios';
 import {useState} from "react";
 import {useNavigate} from 'react-router-dom'
+import {useCookies} from "react-cookie";
 
 
-function RegisterForm({csrfToken}) {
+function RegisterForm() {
 
     const [message, setMessage] = useState(null);
+    const [, setCookie] = useCookies(["LoggedUserId"]);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -19,7 +21,8 @@ function RegisterForm({csrfToken}) {
             const success = response.status === 201
             if (success) {
                 console.log("response".concat(response.data))
-                navigate('/info', { state: { userId: response.data} });
+                setCookie("LoggedUserId", response.data)
+                navigate('/info');
 
             }
         } catch (err) {

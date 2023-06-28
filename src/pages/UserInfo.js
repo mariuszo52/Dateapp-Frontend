@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
-import { useLocation } from 'react-router-dom';
+import {useCookies} from "react-cookie";
+
+
 const UserInfo = () => {
-        const location = useLocation();
-        const userId = location.state?.userId;
+
+    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo" ])
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -15,7 +17,7 @@ const UserInfo = () => {
         genderInterest: "woman",
         url: "",
         about: "",
-        userId: userId
+        userId: cookies.LoggedUserId
     });
 
     const handleChange = (e) => {
@@ -33,6 +35,7 @@ const UserInfo = () => {
         axios
             .post("http://localhost:8080/userinfo", formData)
             .then((response) => {
+                setCookies("UserInfo", formData);
                 window.location.href = "/login";
             })
             .catch((error) => {
