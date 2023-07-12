@@ -1,6 +1,9 @@
 import {  useState } from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
+import {useNavigate} from "react-router-dom";
+import enter from "../images/enter.png";
+
 
 function Login() {
     const [credentials, setCredentials] = useState({
@@ -8,6 +11,7 @@ function Login() {
         password: "",
     });
     const [, setCookies] = useCookies();
+    const navigate = useNavigate();
     const jwtToken = sessionStorage.getItem('jwtToken');
         const handleSubmit = async (event) => {
             event.preventDefault();
@@ -18,7 +22,7 @@ function Login() {
                     const data = response.data;
                     setCookies("LoggedUserId", data.userId);
                     sessionStorage.setItem('jwtToken', 'Bearer '.concat(data.jwt));
-                    window.location.href="/dashboard";
+                    navigate("/dashboard")
                 }
             } catch (error) {
                 console.error(error);
@@ -26,7 +30,9 @@ function Login() {
         };
 
     return (
-        <div>
+        <div className={'login-page'}>
+            <img src={enter} alt={"login"}></img>
+            <h1>Log in to your account</h1>
             <form onSubmit={handleSubmit} className={"register-form"}>
                 <label>Email</label>
                 <input type={"email"} name={"email"}

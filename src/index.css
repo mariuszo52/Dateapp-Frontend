@@ -95,6 +95,7 @@ nav .logo-container .logo {
   outline: none;
 }
 .overlay {
+  overflow: auto;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -103,6 +104,7 @@ nav .logo-container .logo {
           rgba(0, 0, 0, 0.65) 0%,
           rgba(0, 0, 0, 0) 100%
   ), url("images/background.jpg")
+
 }
 .overlay h1{
   color: rgb(255, 255, 255);
@@ -123,12 +125,13 @@ nav .logo-container .logo {
 .onboarding form {
   display: flex;
   justify-content: center;
+  overflow: auto;
 }
 
 .onboarding form section {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px;
   width: 35%;
   text-align: start;
 }
@@ -244,6 +247,11 @@ nav .logo-container .logo {
   object-fit: cover;
   padding: 10px 10px 10px 10px;
   }
+.profile img:hover {
+  scale: 110%;
+  cursor: pointer;
+
+}
 .change-section{
   display: flex;
   background-color: black;
@@ -262,13 +270,13 @@ nav .logo-container .logo {
   transition: background-color 0.3s ease;
 }
 
+
 .section-button:hover {
   background-color: #333;
 }
 .matches{
   display: flex;
   flex-direction: column;
-  height: max-content;
   text-align: left;
   overflow-y: auto;
 }
@@ -291,6 +299,10 @@ nav .logo-container .logo {
   white-space: normal;
   border-radius: 10%;
 }
+.matches .match-card:hover{
+  cursor: pointer;
+  scale: 110%;
+}
 .matches span{
   color: white;
   font-weight: bold;
@@ -301,11 +313,9 @@ nav .logo-container .logo {
 }
 .card-container {
   width: 70%;
-  height: 650px;
   display: flex;
-  align-content: center;
   justify-content: center;
-  margin: auto;
+  align-items: center;
   overflow: hidden;
   position: relative;
 }
@@ -351,3 +361,56 @@ font-size: 35px;
   bottom: 0;
   padding: 10px;
 }
+.login-page{
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-image: url("images/background.jpg");
+  justify-content: center;
+  margin: auto;
+}
+.login-page h1{
+  color: white;
+}
+.login-page img{
+  width: 150px;
+  height: 100px;
+}
+
+
+.settings-container{
+  background-color: black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+}
+.profile-card{
+  background-color: black;
+  width: 400px;
+  height: 650px;
+  border-radius: 30px;
+  background-size: cover;
+  background-position: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.profile-card::-webkit-scrollbar {
+  display: none;
+}
+
+.profile-card img{
+  width: inherit;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 0 0 0 0;
+}
+.profile-card p{
+  color: white;
+}
+.settings > h1, h2{
+  color: white;
+}
+

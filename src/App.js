@@ -3,6 +3,9 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import UserInfo from "./pages/UserInfo";
 import Dashboard from "./pages/Dashboard";
+import {PrivateRoute} from "./components/PrivateRouter";
+import Profile from "./pages/Profile";
+import LikeProfile from "./pages/LikeProfile";
 function App() {
   return (
   <BrowserRouter>
@@ -10,7 +13,9 @@ function App() {
       <Route path={"/"} element={<Home />}></Route>
       <Route path={"/login"} element={<Login />}></Route>
       <Route path={"/info"} element={<UserInfo />}></Route>
-      <Route path={"/dashboard"} element={<Dashboard />}></Route>
+      <Route path={"/dashboard"} element={<PrivateRoute><Dashboard /></PrivateRoute>}></Route>
+      <Route path={"/profile"} element={<PrivateRoute><Profile /></PrivateRoute>}></Route>
+      <Route path={"/like-profile"} element={<PrivateRoute><LikeProfile /></PrivateRoute>}></Route>
     </Routes>
   </BrowserRouter>
   );

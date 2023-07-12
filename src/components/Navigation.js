@@ -6,7 +6,6 @@ const Navigation = () => {
     return (
         <nav>
             <div className={"logo-container"}>
-                <h1>Date App</h1>
                 <img
                     className={"logo"}
                     src={logo}
