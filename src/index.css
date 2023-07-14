@@ -237,7 +237,6 @@ nav .logo-container .logo {
   display: flex;
   flex-direction: row;
   background-color: darkgoldenrod;
-  height: 120px;
   align-items: center;
 }
 .profile img {
@@ -258,6 +257,7 @@ nav .logo-container .logo {
   height: 100px;
 }
 .section-button {
+  width: 100px;
   display: inline-block;
   margin: 5px 5px 5px 5px;
   font-size: 16px;
@@ -279,6 +279,8 @@ nav .logo-container .logo {
   flex-direction: column;
   text-align: left;
   overflow-y: auto;
+  background-color: black;
+  height: 100%;
 }
 .matches ul{
   list-style: none;
@@ -295,7 +297,6 @@ nav .logo-container .logo {
   margin-bottom: 20px;
   margin-right: 20px;
   background-size: cover;
-  background-image: url("images/ajahn.jpg");
   white-space: normal;
   border-radius: 10%;
 }
@@ -407,10 +408,77 @@ font-size: 35px;
   overflow: hidden;
   border-radius: 0 0 0 0;
 }
+#matches-button{
+  background-color: gray;
+}
 .profile-card p{
   color: white;
 }
 .settings > h1, h2{
   color: white;
 }
+.settings{
+  height: 100%;
+}
+.messenger-container{
+  display: flex;
+  flex-direction: row;
+  width: 70%;
+  background-color: lightgray;
+}
+.messages-container{
+  width: 70%;
+}
+.message-profile{
+  background-color: grey;
+  width: 30%;
+
+}
+.messages > hr{
+  color: grey;
+}
+.messages{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  overflow-y: auto;
+  background-color: black;
+  height: 100%;
+}
+.messages ul{
+  list-style: none;
+  position: relative;
+  white-space: normal;
+  margin-right: 30px;
+  align-items: center;
+
+}
+.message-card:hover{
+  cursor: pointer;
+  background-color: grey;
+  
+}
+.message-photo{
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+
+}
+.first-name{
+  color: white;
+  position: absolute;
+  padding-top: 5px;
+  padding-left: 30px;
+
+}
+.last-message{
+  color: white;
+  position: absolute;
+  padding-left: 30px;
+  width: max-content;
+  padding-top: 40px;
+
+}
+
 

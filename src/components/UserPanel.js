@@ -8,7 +8,7 @@ const UserPanel = () => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches"])
     const [, setUserInfo] = useState(cookies.UserInfo);
-    const [currentDiv, setCurrentDiv] = useState("");
+    const [currentDiv, setCurrentDiv] = useState("matches");
     const [likes, setLikes] = useState([]);
 
     useEffect(() => {
@@ -96,6 +96,14 @@ const UserPanel = () => {
 
     }
 
+    const handleButtonMessagesClick = async (divId) => {
+        for (const buttons of document.getElementsByClassName("section-button")) {
+            buttons.style.setProperty("background-color", "black")
+        }
+        document.getElementById("messages-button").style.setProperty("background-color", "grey")
+        setCurrentDiv(divId);
+    };
+
     return (
         <div className={"user-panel"}>
             <div className={"profile"}>
@@ -106,7 +114,7 @@ const UserPanel = () => {
             <div className={'change-section'}>
                 <button id={"matches-button"} onClick={() => handleButtonMatchesClick("matches")} className={'section-button'}>Matches
                 </button>
-                <button className={'section-button'}>Messages</button>
+                <button id={"messages-button"} onClick={() => handleButtonMessagesClick("messages")} className={'section-button'}>Messages</button>
                 <button id={"likes-button"} onClick={() => handleButtonLikesClick("likes")} className={'section-button'}>Likes</button>
             </div>
             {currentDiv === "likes" && (
@@ -134,6 +142,22 @@ const UserPanel = () => {
                                 key={index}
                                 style={{backgroundImage: `url(${match.url})`}}>
                                 <span>{match.firstName}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+            {currentDiv === "messages" && (
+                <div className={"messages"} id={"messages"}>
+                    <ul>
+                        {cookies.Matches.map((match, index) => (
+                            <li
+                                onClick={() => handleShowProfile(match)}
+                                className={"message-card"}
+                                key={index}>
+                                <img className={"message-photo"} alt={match.firstName} src={match.url}></img>
+                                <span className={"first-name"}>{match.firstName}</span>
+                                <span className={"last-message"}>Wiadomosc ostatnia</span>
                             </li>
                         ))}
                     </ul>

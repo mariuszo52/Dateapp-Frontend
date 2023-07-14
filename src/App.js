@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import {PrivateRoute} from "./components/PrivateRouter";
 import Profile from "./pages/Profile";
 import LikeProfile from "./pages/LikeProfile";
+import Messages from "./pages/Messages";
 function App() {
   return (
   <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
       <Route path={"/dashboard"} element={<PrivateRoute><Dashboard /></PrivateRoute>}></Route>
       <Route path={"/profile"} element={<PrivateRoute><Profile /></PrivateRoute>}></Route>
       <Route path={"/like-profile"} element={<PrivateRoute><LikeProfile /></PrivateRoute>}></Route>
+      <Route path={"/messages"} element={<PrivateRoute><Messages /></PrivateRoute>}></Route>
     </Routes>
   </BrowserRouter>
   );
