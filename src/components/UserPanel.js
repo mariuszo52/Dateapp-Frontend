@@ -8,21 +8,15 @@ const UserPanel = () => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches"])
     const [, setUserInfo] = useState(cookies.UserInfo);
-    const [currentDiv, setCurrentDiv] = useState("matches");
+    const [currentDiv, setCurrentDiv] = useState("");
     const [likes, setLikes] = useState([]);
 
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const config = {
-                    headers: {
-                        Authorization: sessionStorage.getItem("jwtToken"),
-                    },
-                };
 
                 const response = await axios.get(
-                    `http://localhost:8080/userinfo?userId=${cookies.LoggedUserId}`,
-                    config
+                    `http://localhost:8080/userinfo?userId=${cookies.LoggedUserId}`
                 );
                 setUserInfo(response.data);
                 setCookie("UserInfo", response.data);
