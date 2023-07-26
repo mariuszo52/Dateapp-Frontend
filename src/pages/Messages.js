@@ -19,7 +19,7 @@ const Messages = () => {
 
             client.connect(headers, function(frame) {
                 console.log('Connected: ' + frame);
-                client.subscribe('/topic/messages', function(messageOutput) {
+                client.subscribe('/topic/1', function(messageOutput) {
                     showMessageOutput(JSON.parse(messageOutput.body));
                 });
             });
@@ -51,8 +51,8 @@ const Messages = () => {
     }
 
     function showMessageOutput(messageOutput) {
-        var response = document.getElementById('response');
-        var p = document.createElement('p');
+        const response = document.getElementById("message");
+        const p = document.createElement('p');
         p.appendChild(document.createTextNode(messageOutput.from + ": " + messageOutput.text));
         response.appendChild(p);
     }
@@ -61,11 +61,16 @@ const Messages = () => {
         <div className="dashboard">
             <UserPanel />
             <div className="messenger-container">
+                <div className={"mess"}>
                 <div className={"messages-container"}>
-                    <p id={"response"}>here will be messages: </p>
-                    <textarea id={"text"}></textarea>
-                    <button onClick={sendMessage}>Send</button>
+                    <div id={"message"}></div>
                 </div>
+                <div id={"message-text"}>
+                    <textarea placeholder={"Type a message"} id={"text"}></textarea>
+                    <button autoFocus={true} onClick={sendMessage}>Send</button>
+                </div>
+                </div>
+
                 <div className={"message-profile"}>
 
                 </div>

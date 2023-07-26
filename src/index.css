@@ -427,7 +427,12 @@ font-size: 35px;
   background-color: lightgray;
 }
 .messages-container{
-  width: 70%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 90%;
+  align-items: end;
+  text-wrap: normal;
 }
 .message-profile{
   background-color: grey;
@@ -440,7 +445,7 @@ font-size: 35px;
 .messages{
   display: flex;
   flex-direction: column;
-  text-align: left;
+  text-align: right;
   overflow-y: auto;
   background-color: black;
   height: 100%;
@@ -480,5 +485,31 @@ font-size: 35px;
   padding-top: 40px;
 
 }
+.messages-container p{
+  background-color: blue;
+  width: inherit;
+  word-wrap: break-word;
+  padding: 10px 10px 10px 10px;
+  border-radius: 5%;
+  color: white;
+}
+.mess{
+  flex-direction: column;
+  width: inherit;
+}
+#message-text{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+#text{
+  width: 80%;
+}
+#message{
+  width: 200px;
+  padding: 5px 5px 5px 5px;
+
+}
+
 
 
