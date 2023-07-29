@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 
 const UserPanel = () => {
     const navigate = useNavigate();
-    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches"])
+    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches", "Chats", "CurrentChat"])
     const [, setUserInfo] = useState(cookies.UserInfo);
     const [currentDiv, setCurrentDiv] = useState("");
     const [likes, setLikes] = useState([]);
@@ -26,6 +26,19 @@ const UserPanel = () => {
         };
 
         fetchUserInfo();
+    }, []);
+    useEffect(() => {
+        const fetchUserChats = async () => {
+            try {
+                let response = await axios.get('http://localhost:8080/all-user-chats?userId='
+                    .concat(cookies.LoggedUserId));
+                setCookie("Chats", response.data);
+            } catch (error) {
+                console.error("Error loading chats:", error);
+            }
+        };
+
+        fetchUserChats();
     }, []);
 
     useEffect(() => {
@@ -98,6 +111,12 @@ const UserPanel = () => {
         setCurrentDiv(divId);
     };
 
+    function handleShowChat(chatId) {
+        setCookie("CurrentChat", chatId);
+        navigate("/messages?chatId=".concat(chatId));
+
+    }
+
     return (
         <div className={"user-panel"}>
             <div className={"profile"}>
@@ -144,13 +163,13 @@ const UserPanel = () => {
             {currentDiv === "messages" && (
                 <div className={"messages"} id={"messages"}>
                     <ul>
-                        {cookies.Matches.map((match, index) => (
+                        {cookies.Chats.map((chat, index) => (
                             <li
-                                onClick={() => handleShowProfile(match)}
+                                onClick={() => handleShowChat(chat.id)}
                                 className={"message-card"}
                                 key={index}>
-                                <img className={"message-photo"} alt={match.firstName} src={match.url}></img>
-                                <span className={"first-name"}>{match.firstName}</span>
+                                <img className={"message-photo"} alt={chat.id} src="blalla"></img>
+                                <span className={"first-name"}>{chat.id}</span>
                                 <span className={"last-message"}>Wiadomosc ostatnia</span>
                             </li>
                         ))}
