@@ -510,6 +510,20 @@ font-size: 35px;
   padding: 5px 5px 5px 5px;
 
 }
+.match-info  {
+  max-width: 800px;
+  margin: 0 auto;
+  height: 95px;;
+}
+.match-info p{
+background-color: inherit;
+  color: black;
+  font-weight: bold;
+  font-size: 15px;
 
+}
 
+.match-info::-webkit-fill-available{
+
+}
 

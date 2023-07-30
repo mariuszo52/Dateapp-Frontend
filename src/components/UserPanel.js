@@ -111,9 +111,9 @@ const UserPanel = () => {
         setCurrentDiv(divId);
     };
 
-    function handleShowChat(chatId) {
-        setCookie("CurrentChat", chatId);
-        navigate("/messages?chatId=".concat(chatId));
+    function handleShowChat(chat) {
+        setCookie("CurrentChat", chat);
+        navigate("/messages");
 
     }
 
@@ -165,7 +165,7 @@ const UserPanel = () => {
                     <ul>
                         {cookies.Chats.map((chat, index) => (
                             <li
-                                onClick={() => handleShowChat(chat.id)}
+                                onClick={() => handleShowChat(chat)}
                                 className={"message-card"}
                                 key={index}>
                                 <img className={"message-photo"} alt={chat.id} src="blalla"></img>
