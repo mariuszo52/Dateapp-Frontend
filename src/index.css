@@ -432,7 +432,6 @@ font-size: 35px;
   overflow-y: auto;
   height: 90%;
   align-items: end;
-  text-wrap: normal;
 }
 .message-profile{
   background-color: grey;
@@ -511,8 +510,10 @@ font-size: 35px;
 
 }
 .match-info  {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 95px;;
 }
 .match-info p{
@@ -523,7 +524,10 @@ background-color: inherit;
 
 }
 
-.match-info::-webkit-fill-available{
-
+.match-info  img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  padding: 10px 10px 10px 10px;
 }
-

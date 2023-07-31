@@ -4,39 +4,55 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import axios from "axios";
 import UserPanel from "../components/UserPanel";
+import {getKeyEventProps} from "@testing-library/user-event/dist/keyboard/getEventProps";
 
 const Messages = () => {
-    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat","Match"]);
+    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat", "MatchedUserId"]);
     const [stompClient, setStompClient] = useState();
     const [messages, setMessages] = useState([]);
-        async function getMessages() {
-            axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
-            try {
-                let response = await axios.get('http://localhost:8080/get-chat-messages?chatId='.concat(cookies.CurrentChat.id));
-                setMessages(response.data);
-            } catch (err) {
-                console.log(err);
-            }
+    const [matchedUserInfo, setMatchedUserInfo] = useState();
+    let   [value, setValue]  = useState();
+    let [areaFocus, setAreaFocus] = useState(true);
+    async function getMessages() {
+        axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
+        try {
+            let response = await axios.get('http://localhost:8080/get-chat-messages?chatId='.concat(cookies.CurrentChat.id));
+            setMessages(response.data);
+        } catch (err) {
+            console.log(err);
         }
+    }
     useEffect(() => {
         if (cookies.CurrentChat.id) {
             getMessages();
         }
     }, []);
     useEffect(() => {
-        async function getMatch() {
+        function checkMatchUserId() {
+            const participants = cookies.CurrentChat.participantsIds;
+
+            if (cookies.LoggedUserId == participants[0]) {
+                setCookie("MatchedUserId", participants[1]);
+            } else {
+                setCookie("MatchedUserId", participants[0]);
+                }
+        }
+        checkMatchUserId();
+    }, []);
+    useEffect(() => {
+        async function getMatchedUserInfo() {
             try {
-                let response = await axios.get('http://localhost:8080/match?id='.concat(cookies.CurrentChat.matchId));
-                setCookie("Match", response.data);
+                let response = await axios.get('http://localhost:8080/userinfo?userId='.concat(cookies.MatchedUserId));
+                setMatchedUserInfo(response.data);
             } catch (err) {
                 console.log(err);
             }
         }
 
-        if (cookies.CurrentChat.matchId) {
-            getMatch();
+        if (cookies.MatchedUserId) {
+            getMatchedUserInfo();
         }
-    }, [cookies.CurrentChat.matchId]);
+    }, [cookies.MatchedUserId]);
 
     useEffect(() => {
         function connect() {
@@ -62,6 +78,13 @@ const Messages = () => {
             }
         };
     }, [cookies.CurrentChat.id]);
+    function clearTextArea(){
+        setValue();
+        //value ma byc pobierane z funkcji pisania
+        setAreaFocus(true)
+
+
+    }
 
     async function sendMessage() {
         const currentMessage = document.getElementById('text').value;
@@ -75,10 +98,13 @@ const Messages = () => {
             };
             try {
                 await axios.post('http://localhost:8080/send-message', message);
+                clearTextArea()
             } catch (err) {
                 console.log(err);
             }
         }
+
+
     }
 
     function showMessageOutput(messageOutput) {
@@ -91,9 +117,7 @@ const Messages = () => {
     useEffect(() => {
         function showChatMessages() {
             const container = document.getElementById("message");
-
             container.innerHTML = '';
-
             messages.forEach((element) => {
                 const paragraph = document.createElement("p");
                 paragraph.textContent = element.text;
@@ -103,8 +127,11 @@ const Messages = () => {
 
         showChatMessages();
     }, [messages]);
-
-
+    function handleKeyDown(event) {
+        if (event.keyCode === 13) {
+            sendMessage()
+        }
+    }
     return (
         <div className="dashboard">
             <UserPanel />
@@ -112,13 +139,16 @@ const Messages = () => {
                 <div className={"mess"}>
                     <div className={"messages-container"}>
                         <div className={"match-info"}>
-                            <p>You matched at {cookies.Match?.matchDate} </p>
+                            <img src={matchedUserInfo?.url} alt={"Match"}></img>
+                            <p>
+                                You matched with {matchedUserInfo?.firstName} on {cookies.CurrentChat?.matchDate}
+                            </p>
                         </div>
                         <div id={"message"}></div>
                     </div>
                     <div id={"message-text"}>
-                        <textarea placeholder={"Type a message"} id={"text"}></textarea>
-                        <button autoFocus={true} onClick={sendMessage}>Send</button>
+                        <textarea autoFocus={true} value={value} placeholder={"Type a message"} id={"text"}></textarea>
+                        <button onKeyDown={() => handleKeyDown(getKeyEventProps())} onClick={sendMessage}>Send</button>
                     </div>
                 </div>
                 <div className={"message-profile"}></div>
