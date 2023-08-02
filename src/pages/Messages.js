@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
+import React, {useEffect, useState} from "react";
+import {useCookies} from "react-cookie";
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import axios from "axios";
 import UserPanel from "../components/UserPanel";
-import {getKeyEventProps} from "@testing-library/user-event/dist/keyboard/getEventProps";
 
 const Messages = () => {
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat", "MatchedUserId"]);
     const [stompClient, setStompClient] = useState();
     const [messages, setMessages] = useState([]);
     const [matchedUserInfo, setMatchedUserInfo] = useState();
-    let   [value, setValue]  = useState();
-    let [areaFocus, setAreaFocus] = useState(true);
+    let [textArea, setTextArea] = useState("");
+
     async function getMessages() {
         axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
         try {
@@ -21,6 +20,16 @@ const Messages = () => {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    const handleKeypress = event => {
+        if (event.keyCode === 13) {
+            sendMessage();
+        }
+    };
+    const handleChange = event => {
+        setTextArea(event.target.value)
+
     }
     useEffect(() => {
         if (cookies.CurrentChat.id) {
@@ -31,12 +40,13 @@ const Messages = () => {
         function checkMatchUserId() {
             const participants = cookies.CurrentChat.participantsIds;
 
-            if (cookies.LoggedUserId == participants[0]) {
+            if (cookies.LoggedUserId === participants[0].toString()) {
                 setCookie("MatchedUserId", participants[1]);
             } else {
                 setCookie("MatchedUserId", participants[0]);
-                }
+            }
         }
+
         checkMatchUserId();
     }, []);
     useEffect(() => {
@@ -54,6 +64,25 @@ const Messages = () => {
         }
     }, [cookies.MatchedUserId]);
 
+        function showMessageOutput(messageOutput) {
+            const message = document.getElementById("message");
+            const div = document.createElement('div');
+            if(messageOutput.fromUserId.toString() === cookies.LoggedUserId){
+                div.setAttribute("class", "message-send-div")
+            }
+            else {
+                div.setAttribute("class", "message-received-div")
+            }
+
+            const p = document.createElement('p');
+            div.appendChild(p)
+            p.appendChild(document.createTextNode(messageOutput.text));
+            message.appendChild(div);
+        }
+
+
+
+
     useEffect(() => {
         function connect() {
             const socket = new SockJS('http://localhost:8080/chat');
@@ -61,8 +90,8 @@ const Messages = () => {
             client.connect([], function (frame) {
                 console.log('Connected: ' + frame);
                 client.subscribe('/topic/'.concat(cookies.CurrentChat.id), function (messageOutput) {
-                    showMessageOutput(JSON.parse(messageOutput.body));
-                });
+                    showMessageOutput(JSON.parse(messageOutput.body))
+                })
             });
 
             setStompClient(client);
@@ -78,13 +107,6 @@ const Messages = () => {
             }
         };
     }, [cookies.CurrentChat.id]);
-    function clearTextArea(){
-        setValue();
-        //value ma byc pobierane z funkcji pisania
-        setAreaFocus(true)
-
-
-    }
 
     async function sendMessage() {
         const currentMessage = document.getElementById('text').value;
@@ -98,20 +120,13 @@ const Messages = () => {
             };
             try {
                 await axios.post('http://localhost:8080/send-message', message);
-                clearTextArea()
+                setTextArea("");
             } catch (err) {
-                console.log(err);
+                console.log(err)
             }
         }
 
 
-    }
-
-    function showMessageOutput(messageOutput) {
-        const response = document.getElementById("message");
-        const p = document.createElement('p');
-        p.appendChild(document.createTextNode(messageOutput.text));
-        response.appendChild(p);
     }
 
     useEffect(() => {
@@ -119,22 +134,26 @@ const Messages = () => {
             const container = document.getElementById("message");
             container.innerHTML = '';
             messages.forEach((element) => {
+                const div = document.createElement("div")
+                if(element.fromUserId.toString() === cookies.LoggedUserId){
+                    div.setAttribute("class", "message-send-div")
+                }
+                else {
+                    div.setAttribute("class", "message-received-div")
+                }
                 const paragraph = document.createElement("p");
+                div.appendChild(paragraph)
                 paragraph.textContent = element.text;
-                container.appendChild(paragraph);
+                container.appendChild(div);
             });
         }
 
         showChatMessages();
     }, [messages]);
-    function handleKeyDown(event) {
-        if (event.keyCode === 13) {
-            sendMessage()
-        }
-    }
+
     return (
         <div className="dashboard">
-            <UserPanel />
+            <UserPanel/>
             <div className="messenger-container">
                 <div className={"mess"}>
                     <div className={"messages-container"}>
@@ -147,11 +166,18 @@ const Messages = () => {
                         <div id={"message"}></div>
                     </div>
                     <div id={"message-text"}>
-                        <textarea autoFocus={true} value={value} placeholder={"Type a message"} id={"text"}></textarea>
-                        <button onKeyDown={() => handleKeyDown(getKeyEventProps())} onClick={sendMessage}>Send</button>
+                        <textarea onKeyDown={handleKeypress} onChange={handleChange} value={textArea} autoFocus={true}
+                                  placeholder={"Type a message"} id={"text"}></textarea>
+                        <button onClick={sendMessage}>Send</button>
                     </div>
                 </div>
-                <div className={"message-profile"}></div>
+                <div className={"message-profile"}>
+                    <img src={matchedUserInfo?.url} alt="Matched user"></img>
+                    <h1>{matchedUserInfo?.firstName} {matchedUserInfo?.age}</h1>
+                    <p>{matchedUserInfo?.genderIdentity}</p>
+                    <p>Interested in: {matchedUserInfo?.genderInterest}</p>
+                    <p>{matchedUserInfo?.about}</p>
+                </div>
             </div>
         </div>
     );

@@ -6,10 +6,11 @@ import {useNavigate} from "react-router-dom";
 
 const UserPanel = () => {
     const navigate = useNavigate();
-    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches", "Chats", "CurrentChat"])
+    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches", "CurrentChat"])
     const [, setUserInfo] = useState(cookies.UserInfo);
     const [currentDiv, setCurrentDiv] = useState("");
     const [likes, setLikes] = useState([]);
+    const [chats, setChats] = useState(cookies.Chats)
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -19,7 +20,7 @@ const UserPanel = () => {
                     `http://localhost:8080/userinfo?userId=${cookies.LoggedUserId}`
                 );
                 setUserInfo(response.data);
-                setCookie("UserInfo", response.data);
+                setCookie("UserInfo", response.data)
             } catch (error) {
                 console.error("Wystąpił błąd podczas pobierania danych użytkownika:", error);
             }
@@ -27,19 +28,17 @@ const UserPanel = () => {
 
         fetchUserInfo();
     }, []);
-    useEffect(() => {
+
+
         const fetchUserChats = async () => {
             try {
                 let response = await axios.get('http://localhost:8080/all-user-chats?userId='
                     .concat(cookies.LoggedUserId));
-                setCookie("Chats", response.data);
+                setChats(response.data)
             } catch (error) {
                 console.error("Error loading chats:", error);
             }
         };
-
-        fetchUserChats();
-    }, []);
 
     useEffect(() => {
         const fetchUserMatch = async () => {
@@ -108,6 +107,7 @@ const UserPanel = () => {
             buttons.style.setProperty("background-color", "black")
         }
         document.getElementById("messages-button").style.setProperty("background-color", "grey")
+        await fetchUserChats();
         setCurrentDiv(divId);
     };
 
@@ -163,7 +163,7 @@ const UserPanel = () => {
             {currentDiv === "messages" && (
                 <div className={"messages"} id={"messages"}>
                     <ul>
-                        {cookies.Chats.map((chat, index) => (
+                        {chats?.map((chat, index) => (
                             <li
                                 onClick={() => handleShowChat(chat)}
                                 className={"message-card"}
