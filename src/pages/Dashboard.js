@@ -7,6 +7,8 @@ import { useCookies } from "react-cookie";
 const Dashboard = () => {
     const [cards, setCards] = useState([]);
     const [cookies] = useCookies(["LoggedUserId"]);
+    const [match, setMatch] = useState(false)
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -69,7 +71,9 @@ const Dashboard = () => {
                 data,
                 config
             );
-            console.log(response.data)
+            if(response.data === "match"){
+                setMatch(true)
+            }
         } catch (error) {
             console.error("Wystąpił błąd podczas zapisywania odrzuconego przesunięcia:", error);
         }
@@ -86,13 +90,14 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            <UserPanel />
+            <UserPanel match = {match} />
             <div className="card-container">
                 {cards?.map((user) => (
                     <TinderCard
                         className="swipe"
                         key={user.userId}
                         onSwipe={(dir) => swiped(dir, user.userId)}
+
                     >
                         <div
                             style={{

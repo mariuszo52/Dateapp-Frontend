@@ -2,15 +2,17 @@ import {useCookies} from "react-cookie";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import DisappearingText from "./MatchText";
 
 
-const UserPanel = () => {
+const UserPanel = ({match}) => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches", "CurrentChat"])
     const [, setUserInfo] = useState(cookies.UserInfo);
     const [currentDiv, setCurrentDiv] = useState("");
     const [likes, setLikes] = useState([]);
     const [chats, setChats] = useState(cookies.Chats)
+
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -54,12 +56,12 @@ const UserPanel = () => {
                 setCookie("Matches", response.data);
                 setCurrentDiv("matches")
             } catch (error) {
-                console.error("Wystąpił błąd podczas pobierania danych użytkownika:", error);
+                console.error(error);
             }
         };
 
         fetchUserMatch();
-    }, []);
+    }, [match]);
 
 
     const handleButtonLikesClick = async (divId) => {
@@ -113,8 +115,12 @@ const UserPanel = () => {
 
     function handleShowChat(chat) {
         setCookie("CurrentChat", chat);
-        navigate("/messages");
-
+        if(window.location.pathname === "/messages"){
+            window.location.reload();
+        }else {
+            navigate("/messages");
+        }
+        setCurrentDiv("messages")
     }
 
     return (
@@ -122,6 +128,7 @@ const UserPanel = () => {
             <div className={"profile"}>
                 <img src={cookies.UserInfo?.url} alt={"User"} onClick={handleImageClick}></img>
                 <h2>{cookies.UserInfo?.firstName}</h2>
+                {match && <DisappearingText text="It's a match!" duration={5000} />}
             </div>
 
             <div className={'change-section'}>

@@ -236,8 +236,11 @@ nav .logo-container .logo {
 .profile{
   display: flex;
   flex-direction: row;
-  background-color: darkgoldenrod;
+  background-color: #232383;
   align-items: center;
+}
+.profile h2{
+  padding-right: 10px;
 }
 .profile img {
   width: 75px;
@@ -332,6 +335,7 @@ nav .logo-container .logo {
 
 .swipe {
   position: absolute;
+  z-index: 100;
 }
 
 
@@ -564,7 +568,10 @@ background-color: inherit;
   display: flex;
   justify-content: end;
   width: 95%;
-
-
+}
+.match-notification p{
+  color: red;
+  font-size: 20px;
+  font-weight: bold;
 }
 

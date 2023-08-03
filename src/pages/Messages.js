@@ -4,6 +4,7 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import axios from "axios";
 import UserPanel from "../components/UserPanel";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Messages = () => {
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat", "MatchedUserId"]);
@@ -15,7 +16,8 @@ const Messages = () => {
     async function getMessages() {
         axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
         try {
-            let response = await axios.get('http://localhost:8080/get-chat-messages?chatId='.concat(cookies.CurrentChat.id));
+            let response = await axios.get('http://localhost:8080/get-chat-messages?chatId='
+                .concat(cookies.CurrentChat.id).concat("&size=20&page=0"));
             setMessages(response.data);
         } catch (err) {
             console.log(err);
@@ -36,6 +38,7 @@ const Messages = () => {
             getMessages();
         }
     }, []);
+
     useEffect(() => {
         function checkMatchUserId() {
             const participants = cookies.CurrentChat.participantsIds;
@@ -49,6 +52,7 @@ const Messages = () => {
 
         checkMatchUserId();
     }, []);
+
     useEffect(() => {
         async function getMatchedUserInfo() {
             try {
