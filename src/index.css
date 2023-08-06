@@ -433,9 +433,12 @@ font-size: 35px;
 .messages-container{
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: scroll;
   height: 90%;
   align-items: start;
+}
+.messages-container::-webkit-scrollbar {
+  display: none;
 }
 .message-profile{
   background-color: rgb(166, 159, 159);
@@ -457,11 +460,13 @@ font-size: 35px;
   height: 100%;
 }
 .messages ul{
+  display: flex;
+  flex-direction: column;
   list-style: none;
   position: relative;
   white-space: normal;
   margin-right: 30px;
-  align-items: center;
+  align-items: start;
 
 }
 .message-card:hover{
@@ -480,7 +485,7 @@ font-size: 35px;
   color: white;
   position: absolute;
   padding-top: 5px;
-  padding-left: 30px;
+  padding-left: 105px;
 
 }
 .last-message{
@@ -520,6 +525,7 @@ font-size: 35px;
   flex-direction: column;
   align-items: center;
   width: 100%;
+
 
 }
 .match-info  {

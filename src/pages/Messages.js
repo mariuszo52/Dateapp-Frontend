@@ -1,23 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useCookies} from "react-cookie";
 import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import axios from "axios";
 import UserPanel from "../components/UserPanel";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 const Messages = () => {
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat", "MatchedUserId"]);
     const [stompClient, setStompClient] = useState();
     const [messages, setMessages] = useState([]);
     const [matchedUserInfo, setMatchedUserInfo] = useState();
-    let [textArea, setTextArea] = useState("");
+    const [textArea, setTextArea] = useState("");
+    const messageContainerRef = useRef(null);
 
     async function getMessages() {
         axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
         try {
             let response = await axios.get('http://localhost:8080/get-chat-messages?chatId='
-                .concat(cookies.CurrentChat.id).concat("&size=20&page=0"));
+                .concat(cookies.CurrentChat.id));
             setMessages(response.data);
         } catch (err) {
             console.log(err);
@@ -31,8 +31,8 @@ const Messages = () => {
     };
     const handleChange = event => {
         setTextArea(event.target.value)
-
     }
+
     useEffect(() => {
         if (cookies.CurrentChat.id) {
             getMessages();
@@ -66,7 +66,7 @@ const Messages = () => {
         if (cookies.MatchedUserId) {
             getMatchedUserInfo();
         }
-    }, [cookies.MatchedUserId]);
+    }, []);
 
         function showMessageOutput(messageOutput) {
             const message = document.getElementById("message");
@@ -101,7 +101,7 @@ const Messages = () => {
             setStompClient(client);
         }
 
-        if (cookies.CurrentChat.id) {
+        if ([]) {
             connect();
         }
 
@@ -110,7 +110,7 @@ const Messages = () => {
                 stompClient.disconnect();
             }
         };
-    }, [cookies.CurrentChat.id]);
+    }, []);
 
     async function sendMessage() {
         const currentMessage = document.getElementById('text').value;
@@ -155,19 +155,26 @@ const Messages = () => {
         showChatMessages();
     }, [messages]);
 
+    useEffect(() => {
+        if (messageContainerRef.current) {
+            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+        }
+    });
+
     return (
         <div className="dashboard">
             <UserPanel/>
             <div className="messenger-container">
-                <div className={"mess"}>
-                    <div className={"messages-container"}>
-                        <div className={"match-info"}>
+                <div className={"mess"} >
+                    <div className={"messages-container"} ref={messageContainerRef} >
+                        <div className={"match-info"}  >
                             <img src={matchedUserInfo?.url} alt={"Match"}></img>
                             <p>
                                 You matched with {matchedUserInfo?.firstName} on {cookies.CurrentChat?.matchDate}
                             </p>
                         </div>
                         <div id={"message"}></div>
+
                     </div>
                     <div id={"message-text"}>
                         <textarea onKeyDown={handleKeypress} onChange={handleChange} value={textArea} autoFocus={true}

@@ -2,20 +2,18 @@ import {useCookies} from "react-cookie";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import DisappearingText from "./MatchText";
 
-
-const UserPanel = ({match}) => {
+const UserPanel = () => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches", "CurrentChat"])
     const [, setUserInfo] = useState(cookies.UserInfo);
-    const [currentDiv, setCurrentDiv] = useState("");
+    const [currentDiv, setCurrentDiv] = useState("matches");
     const [likes, setLikes] = useState([]);
-    const [chats, setChats] = useState(cookies.Chats)
-
+    const [chats, setChats] = useState([])
 
     useEffect(() => {
         const fetchUserInfo = async () => {
+            axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
             try {
 
                 const response = await axios.get(
@@ -31,17 +29,6 @@ const UserPanel = ({match}) => {
         fetchUserInfo();
     }, []);
 
-
-        const fetchUserChats = async () => {
-            try {
-                let response = await axios.get('http://localhost:8080/all-user-chats?userId='
-                    .concat(cookies.LoggedUserId));
-                setChats(response.data)
-            } catch (error) {
-                console.error("Error loading chats:", error);
-            }
-        };
-
     useEffect(() => {
         const fetchUserMatch = async () => {
             try {
@@ -54,14 +41,24 @@ const UserPanel = ({match}) => {
                 let response = await axios.get('http://localhost:8080/all-matches?userId='
                     .concat(cookies.LoggedUserId), config);
                 setCookie("Matches", response.data);
-                setCurrentDiv("matches")
             } catch (error) {
                 console.error(error);
             }
         };
-
         fetchUserMatch();
-    }, [match]);
+    }, [currentDiv]);
+
+        const fetchUserChats = async () => {
+            try {
+                let response = await axios.get('http://localhost:8080/all-user-chats?userId='
+                    .concat(cookies.LoggedUserId));
+                setChats(response.data)
+            } catch (error) {
+                console.error("Error loading chats:", error);
+            }
+        };
+
+
 
 
     const handleButtonLikesClick = async (divId) => {
@@ -113,6 +110,11 @@ const UserPanel = ({match}) => {
         setCurrentDiv(divId);
     };
 
+    function handleClickOnChat(chat){
+
+    }
+
+
     function handleShowChat(chat) {
         setCookie("CurrentChat", chat);
         if(window.location.pathname === "/messages"){
@@ -120,7 +122,7 @@ const UserPanel = ({match}) => {
         }else {
             navigate("/messages");
         }
-        setCurrentDiv("messages")
+
     }
 
     return (
@@ -128,7 +130,7 @@ const UserPanel = ({match}) => {
             <div className={"profile"}>
                 <img src={cookies.UserInfo?.url} alt={"User"} onClick={handleImageClick}></img>
                 <h2>{cookies.UserInfo?.firstName}</h2>
-                {match && <DisappearingText text="It's a match!" duration={5000} />}
+
             </div>
 
             <div className={'change-section'}>
@@ -140,7 +142,7 @@ const UserPanel = ({match}) => {
             {currentDiv === "likes" && (
                 <div className={"matches"} id={"likes"}>
                     <ul>
-                        {likes.map((like, index) => (
+                        {likes?.map((like, index) => (
                             <li
                                 onClick={() => handleShowProfile(like)}
                                 className={"match-card"}
@@ -155,7 +157,7 @@ const UserPanel = ({match}) => {
             {currentDiv === "matches" && (
                 <div className={"matches"} id={"matches"}>
                     <ul>
-                        {cookies.Matches.map((match, index) => (
+                        {cookies.Matches?.map((match, index) => (
                             <li
                                 onClick={() => handleShowProfile(match)}
                                 className={"match-card"}
@@ -169,18 +171,31 @@ const UserPanel = ({match}) => {
             )}
             {currentDiv === "messages" && (
                 <div className={"messages"} id={"messages"}>
-                    <ul>
                         {chats?.map((chat, index) => (
-                            <li
+                            <ul
                                 onClick={() => handleShowChat(chat)}
                                 className={"message-card"}
                                 key={index}>
-                                <img className={"message-photo"} alt={chat.id} src="blalla"></img>
-                                <span className={"first-name"}>{chat.id}</span>
-                                <span className={"last-message"}>Wiadomosc ostatnia</span>
-                            </li>
+                                {cookies.LoggedUserId === chat.matchDtos[0].userId.toString() ? (
+
+                                        <li>
+                                        <span className={"first-name"}>{chat.matchDtos[0].matchedUserName}</span>
+                                    <img className={"message-photo"} alt={chat.matchDtos[0].userId}
+                                         src={chat.matchDtos[0].matchedUserUrl}></img>
+                                            <span className={"last-message"}>{chat.lastMessage}</span>
+                                        </li>
+
+                                    ) : (
+                                    <li>
+                                        <span className={"first-name"}>{chat.matchDtos[1].matchedUserName}</span>
+                                        <img className={"message-photo"} alt={chat.matchDtos[1].userId}
+                                             src={chat.matchDtos[1].matchedUserUrl}></img>
+                                        <span className={"last-message"}>{chat.lastMessage}</span>
+
+                                    </li>
+                                )}
+                            </ul>
                         ))}
-                    </ul>
                 </div>
             )}
         </div>

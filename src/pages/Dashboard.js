@@ -1,13 +1,12 @@
 import TinderCard from 'react-tinder-card'
 import UserPanel from "../components/UserPanel";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { useCookies } from "react-cookie";
+import {useCookies} from "react-cookie";
 
 const Dashboard = () => {
     const [cards, setCards] = useState([]);
     const [cookies] = useCookies(["LoggedUserId"]);
-    const [match, setMatch] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -17,10 +16,7 @@ const Dashboard = () => {
                         Authorization: sessionStorage.getItem("jwtToken"),
                     },
                 };
-                const response = await axios.get(
-                    `http://localhost:8080/get-swipe-users?userId=${cookies.LoggedUserId}`,
-                    config
-                );
+                const response = await axios.get(`http://localhost:8080/get-swipe-users?userId=${cookies.LoggedUserId}`, config);
                 setCards(response.data);
             } catch (error) {
                 console.error("Wystąpił błąd podczas pobierania użytkowników:", error);
@@ -28,7 +24,7 @@ const Dashboard = () => {
         };
 
         fetchData();
-    }, [cookies.LoggedUserId]);
+    }, []);
 
     const saveLeftSwipe = async (swipedProfileId) => {
         try {
@@ -39,15 +35,10 @@ const Dashboard = () => {
             };
 
             const data = {
-                userId: cookies.LoggedUserId,
-                swipedProfileId: swipedProfileId,
+                userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
             };
 
-            const response = await axios.post(
-                "http://localhost:8080/swipe-left",
-                data,
-                config
-            );
+            const response = await axios.post("http://localhost:8080/swipe-left", data, config);
             console.log(response.data);
         } catch (error) {
             console.error("Wystąpił błąd podczas zapisywania odrzuconego przesunięcia:", error);
@@ -62,17 +53,12 @@ const Dashboard = () => {
             };
 
             const data = {
-                userId: cookies.LoggedUserId,
-                swipedProfileId: swipedProfileId,
+                userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
             };
 
-            const response = await axios.post(
-                "http://localhost:8080/swipe-right",
-                data,
-                config
-            );
-            if(response.data === "match"){
-                setMatch(true)
+            const response = await axios.post("http://localhost:8080/swipe-right", data, config);
+            if (response.data === "match") {
+                alert("It's a match!!")
             }
         } catch (error) {
             console.error("Wystąpił błąd podczas zapisywania odrzuconego przesunięcia:", error);
@@ -88,16 +74,13 @@ const Dashboard = () => {
         }
     };
 
-    return (
-        <div className="dashboard">
-            <UserPanel match = {match} />
+    return (<div className="dashboard">
+            <UserPanel />
             <div className="card-container">
-                {cards?.map((user) => (
-                    <TinderCard
+                {cards?.map((user) => (<TinderCard
                         className="swipe"
                         key={user.userId}
                         onSwipe={(dir) => swiped(dir, user.userId)}
-
                     >
                         <div
                             style={{
@@ -108,11 +91,9 @@ const Dashboard = () => {
                             <h2>{user.firstName} {user.age}</h2>
                             <p>{user.about}</p>
                         </div>
-                    </TinderCard>
-                ))}
+                    </TinderCard>))}
             </div>
-        </div>
-    );
+        </div>);
 };
 
 export default Dashboard;
