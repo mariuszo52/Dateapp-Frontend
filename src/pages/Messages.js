@@ -12,6 +12,29 @@ const Messages = () => {
     const [matchedUserInfo, setMatchedUserInfo] = useState();
     const [textArea, setTextArea] = useState("");
     const messageContainerRef = useRef(null);
+    const [notificationCounter, setNotificationCounter] = useState(0);
+    const [chatUsername, setChatUsername] = useState("");
+    const [ticketText, setTicketText] = useState("");
+    const [isTicketValid, setIsTicketValid] = useState(false);
+
+
+    useEffect(() => {
+        function updateNotificationDisplay() {
+            console.log(notificationCounter)
+            let notification = document.getElementById("notification");
+            if (notificationCounter === 0) {
+                notification.setAttribute("hidden", "true");
+
+            } else {
+                notification.removeAttribute("hidden")
+                notification.textContent = notificationCounter.toString();
+            }
+
+        }
+
+        updateNotificationDisplay()
+    }, [notificationCounter, chatUsername]);
+
 
     async function getMessages() {
         axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
@@ -68,49 +91,78 @@ const Messages = () => {
         }
     }, []);
 
-        function showMessageOutput(messageOutput) {
-            const message = document.getElementById("message");
-            const div = document.createElement('div');
-            if(messageOutput.fromUserId.toString() === cookies.LoggedUserId){
-                div.setAttribute("class", "message-send-div")
-            }
-            else {
-                div.setAttribute("class", "message-received-div")
-            }
-
-            const p = document.createElement('p');
-            div.appendChild(p)
-            p.appendChild(document.createTextNode(messageOutput.text));
-            message.appendChild(div);
+    function showMessageOutput(messageOutput) {
+        const message = document.getElementById("message");
+        const div = document.createElement('div');
+        if (messageOutput.fromUserId.toString() === cookies.LoggedUserId) {
+            div.setAttribute("class", "message-send-div")
+        } else {
+            div.setAttribute("class", "message-received-div")
         }
 
+        const p = document.createElement('p');
+        div.appendChild(p)
+        p.appendChild(document.createTextNode(messageOutput.text));
+        message.appendChild(div);
+    }
 
+    useEffect(() => {
+        async function fetchWebSocketTicket() {
+            try {
+                let response = await axios.post('http://localhost:8080/ws-ticket?userId=' + cookies.LoggedUserId);
+                setTicketText(response.data.text)
+                console.log("Ticked fetched.")
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fetchWebSocketTicket()
+    }, []);
+
+    useEffect(() => {
+        async function fetchWebSocketTicket() {
+            try {
+                let response = await axios.get('http://localhost:8080/ticket-validity?ticketText=' + ticketText);
+                setIsTicketValid(response.data)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        if(ticketText !== "")
+        fetchWebSocketTicket()
+    }, [ticketText]);
 
 
     useEffect(() => {
-        function connect() {
-            const socket = new SockJS('http://localhost:8080/chat');
-            const client = Stomp.over(socket);
-            client.connect([], function (frame) {
-                console.log('Connected: ' + frame);
-                client.subscribe('/topic/'.concat(cookies.CurrentChat.id), function (messageOutput) {
-                    showMessageOutput(JSON.parse(messageOutput.body))
-                })
-            });
+            async function connect() {
+                const socket = new SockJS('http://localhost:8080/chat?ticketText=' + ticketText);
+                const client = Stomp.over(socket);
+                client.connect([], function (frame) {
+                    setChatUsername(frame.headers["user-name"])
+                    console.log('Connected: ' + frame);
+                    client.subscribe('/topic/'.concat(cookies.CurrentChat.id), function (messageOutput) {
+                        setNotificationCounter(notificationCounter =>
+                            notificationCounter + 1);
+                        showMessageOutput(JSON.parse(messageOutput.body))
+                        setTicketText("");
+                    })
+                });
 
-            setStompClient(client);
-        }
-
-        if ([]) {
-            connect();
-        }
-
-        return () => {
-            if (stompClient != null) {
-                stompClient.disconnect();
+                setStompClient(client);
             }
-        };
-    }, []);
+
+            if (ticketText !== "" && isTicketValid) {
+                connect();
+            }
+
+            return () => {
+                if (stompClient != null) {
+                    stompClient.disconnect();
+                }
+            };
+        },
+        [isTicketValid]
+    );
 
     async function sendMessage() {
         const currentMessage = document.getElementById('text').value;
@@ -139,10 +191,9 @@ const Messages = () => {
             container.innerHTML = '';
             messages.forEach((element) => {
                 const div = document.createElement("div")
-                if(element.fromUserId.toString() === cookies.LoggedUserId){
+                if (element.fromUserId.toString() === cookies.LoggedUserId) {
                     div.setAttribute("class", "message-send-div")
-                }
-                else {
+                } else {
                     div.setAttribute("class", "message-received-div")
                 }
                 const paragraph = document.createElement("p");
@@ -165,9 +216,9 @@ const Messages = () => {
         <div className="dashboard">
             <UserPanel/>
             <div className="messenger-container">
-                <div className={"mess"} >
-                    <div className={"messages-container"} ref={messageContainerRef} >
-                        <div className={"match-info"}  >
+                <div className={"mess"}>
+                    <div className={"messages-container"} ref={messageContainerRef}>
+                        <div className={"match-info"}>
                             <img src={matchedUserInfo?.url} alt={"Match"}></img>
                             <p>
                                 You matched with {matchedUserInfo?.firstName} on {cookies.CurrentChat?.matchDate}
@@ -183,6 +234,7 @@ const Messages = () => {
                     </div>
                 </div>
                 <div className={"message-profile"}>
+                    <span id={"notification"}></span>
                     <img src={matchedUserInfo?.url} alt="Matched user"></img>
                     <h1>{matchedUserInfo?.firstName} {matchedUserInfo?.age}</h1>
                     <p>{matchedUserInfo?.genderIdentity}</p>
