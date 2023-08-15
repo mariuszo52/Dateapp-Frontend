@@ -9,10 +9,10 @@ const UserInfo = () => {
 
     const [formData, setFormData] = useState({
         firstName: "",
+        location: "",
         dayOfBirth: "",
         monthOfBirth: "",
         yearOfBirth: "",
-        showGender: false,
         genderIdentity: "man",
         genderInterest: "woman",
         url: "",
@@ -45,8 +45,6 @@ const UserInfo = () => {
         return (
             <>
             <div className="onboarding">
-                <h2>CREATE ACCOUNT</h2>
-
                 <form onSubmit={handleSubmit}>
                     <section>
                         <label htmlFor="firstName">First Name</label>
@@ -57,6 +55,16 @@ const UserInfo = () => {
                             placeholder="First Name"
                             required={true}
                             value={formData.firstName}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="location">Location</label>
+                        <input
+                            id="location"
+                            type="text"
+                            name="location"
+                            required={true}
+                            placeholder="Warsaw"
+                            value={formData.location}
                             onChange={handleChange}
                         />
 
@@ -113,26 +121,7 @@ const UserInfo = () => {
                                 checked={formData.genderIdentity === "woman"}
                             />
                             <label htmlFor="womanGenderIdentity">Woman</label>
-                            <input
-                                id="moreGenderIdentity"
-                                type="radio"
-                                name="genderIdentity"
-                                value="more"
-                                onChange={handleChange}
-                                checked={formData.genderIdentity === "more"}
-                            />
-                            <label htmlFor="moreGenderIdentity">More</label>
                         </div>
-
-                        <label htmlFor="showGender">Show Gender on my Profile</label>
-
-                        <input
-                            id="showGender"
-                            type="checkbox"
-                            name="showGender"
-                            onChange={handleChange}
-                            checked={formData.showGender}
-                        />
 
                         <label>Show Me</label>
 
@@ -155,15 +144,6 @@ const UserInfo = () => {
                                 checked={formData.genderInterest === "woman"}
                             />
                             <label htmlFor="womanGenderInterest">Woman</label>
-                            <input
-                                id="everyoneGenderInterest"
-                                type="radio"
-                                name="genderInterest"
-                                value="everyone"
-                                onChange={handleChange}
-                                checked={formData.genderInterest === "everyone"}
-                            />
-                            <label htmlFor="everyoneGenderInterest">Everyone</label>
 
                         </div>
 

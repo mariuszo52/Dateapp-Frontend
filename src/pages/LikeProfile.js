@@ -14,6 +14,8 @@ const LikeProfile = () => {
                     <img src={cookies.profile.url} alt={"User"}/>
                     <p>{cookies.profile.firstName} <span>{cookies.profile.age}</span></p>
                     <hr></hr>
+                    <p>{cookies.profile.location}</p>
+                    <hr></hr>
                     <p>{cookies.profile.genderIdentity}</p>
                     <hr></hr>
                     <p>Interested in: {cookies.profile.genderInterest}</p>

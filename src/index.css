@@ -120,6 +120,7 @@ nav .logo-container .logo {
 }
 .onboarding {
   border-top: solid 1px rgb(213, 213, 213);
+
 }
 
 .onboarding form {
@@ -138,7 +139,7 @@ nav .logo-container .logo {
 
 .onboarding form input {
   padding: 15px 30px;
-  margin: 10px 0;
+  margin: 5px 0;
   font-size: 15px;
   border: solid 2px rgb(219, 219, 219);
   border-radius: 10px;
@@ -445,8 +446,10 @@ font-size: 35px;
   width: 30%;
   display: flex;
   flex-direction: column;
-
-
+  overflow-y:auto;
+}
+.message-profile::-webkit-scrollbar {
+  display: none;
 }
 .messages > hr{
   color: grey;
@@ -558,8 +561,10 @@ background-color: inherit;
 .message-profile p{
   padding: 10px;
   display: block;
-  border: 2px solid black;
-  border-radius: 50% 50% 50% 50%;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  background-color: #cccccc;
+
 }
 .message-received-div{
   display: flex;
@@ -575,10 +580,8 @@ background-color: inherit;
   justify-content: end;
   width: 95%;
 }
-.match-notification p{
-  color: red;
-  font-size: 20px;
-  font-weight: bold;
+#new-message{
+  color: darkgoldenrod;
+  font-size: large;
 }
-
 

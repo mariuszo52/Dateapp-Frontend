@@ -12,34 +12,22 @@ const Messages = () => {
     const [matchedUserInfo, setMatchedUserInfo] = useState();
     const [textArea, setTextArea] = useState("");
     const messageContainerRef = useRef(null);
-    const [notificationCounter, setNotificationCounter] = useState(0);
-    const [chatUsername, setChatUsername] = useState("");
+    const [notificationCounter, setNotificationCounter] = useState();
     const [ticketText, setTicketText] = useState("");
-    const [isTicketValid, setIsTicketValid] = useState(false);
 
-
-    useEffect(() => {
-        function updateNotificationDisplay() {
-            console.log(notificationCounter)
-            let notification = document.getElementById("notification");
-            if (notificationCounter === 0) {
-                notification.setAttribute("hidden", "true");
-
-            } else {
-                notification.removeAttribute("hidden")
-                notification.textContent = notificationCounter.toString();
-            }
-
+    async function getChatNotificationsCounter() {
+        try {
+            let response = await axios.get('http://localhost:8080/notifications-counter?chatId='
+                + cookies.CurrentChat.id + "&userId=" + cookies.LoggedUserId);
+            setNotificationCounter(response.data);
+        } catch (err) {
+            console.log(err);
         }
-
-        updateNotificationDisplay()
-    }, [notificationCounter, chatUsername]);
-
+    }
 
     async function getMessages() {
-        axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
         try {
-            let response = await axios.get('http://localhost:8080/get-chat-messages?chatId='
+            let response = await axios.get('http://localhost:8080/chat-messages?chatId='
                 .concat(cookies.CurrentChat.id));
             setMessages(response.data);
         } catch (err) {
@@ -119,30 +107,24 @@ const Messages = () => {
         fetchWebSocketTicket()
     }, []);
 
-    useEffect(() => {
-        async function fetchWebSocketTicket() {
-            try {
-                let response = await axios.get('http://localhost:8080/ticket-validity?ticketText=' + ticketText);
-                setIsTicketValid(response.data)
-            } catch (err) {
-                console.log(err)
-            }
-        }
-        if(ticketText !== "")
-        fetchWebSocketTicket()
-    }, [ticketText]);
 
+        async function updateChatNotificationsCounter() {
+        try {
+             await axios.put('http://localhost:8080/notifications-counter?chatId='
+                + cookies.CurrentChat.id + "&userId=" + cookies.LoggedUserId);
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     useEffect(() => {
             async function connect() {
                 const socket = new SockJS('http://localhost:8080/chat?ticketText=' + ticketText);
                 const client = Stomp.over(socket);
                 client.connect([], function (frame) {
-                    setChatUsername(frame.headers["user-name"])
                     console.log('Connected: ' + frame);
                     client.subscribe('/topic/'.concat(cookies.CurrentChat.id), function (messageOutput) {
-                        setNotificationCounter(notificationCounter =>
-                            notificationCounter + 1);
+                        getChatNotificationsCounter()
                         showMessageOutput(JSON.parse(messageOutput.body))
                         setTicketText("");
                     })
@@ -151,7 +133,7 @@ const Messages = () => {
                 setStompClient(client);
             }
 
-            if (ticketText !== "" && isTicketValid) {
+            if (ticketText !== "") {
                 connect();
             }
 
@@ -161,7 +143,7 @@ const Messages = () => {
                 }
             };
         },
-        [isTicketValid]
+        [ticketText]
     );
 
     async function sendMessage() {
@@ -177,6 +159,7 @@ const Messages = () => {
             try {
                 await axios.post('http://localhost:8080/send-message', message);
                 setTextArea("");
+                await updateChatNotificationsCounter();
             } catch (err) {
                 console.log(err)
             }
@@ -214,7 +197,7 @@ const Messages = () => {
 
     return (
         <div className="dashboard">
-            <UserPanel/>
+            <UserPanel />
             <div className="messenger-container">
                 <div className={"mess"}>
                     <div className={"messages-container"} ref={messageContainerRef}>
@@ -234,9 +217,9 @@ const Messages = () => {
                     </div>
                 </div>
                 <div className={"message-profile"}>
-                    <span id={"notification"}></span>
                     <img src={matchedUserInfo?.url} alt="Matched user"></img>
                     <h1>{matchedUserInfo?.firstName} {matchedUserInfo?.age}</h1>
+                    <p>{matchedUserInfo?.location}</p>
                     <p>{matchedUserInfo?.genderIdentity}</p>
                     <p>Interested in: {matchedUserInfo?.genderInterest}</p>
                     <p>{matchedUserInfo?.about}</p>
