@@ -11,10 +11,10 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/get-swipe-users?userId=${cookies.LoggedUserId}`);
+                const response = await axios.get(`http://localhost:8080/get-swipe-users`);
                 setCards(response.data);
             } catch (error) {
-                console.error("Wystąpił błąd podczas pobierania użytkowników:", error);
+                console.error(error);
             }
         };
 

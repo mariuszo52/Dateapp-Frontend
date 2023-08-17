@@ -24,7 +24,7 @@ const UserPanel = () => {
                 setUserInfo(response.data);
                 setCookie("UserInfo", response.data)
             } catch (error) {
-                console.error("Wystąpił błąd podczas pobierania danych użytkownika:", error);
+                console.error(error);
             }
         };
 
@@ -33,8 +33,7 @@ const UserPanel = () => {
 
     async function fetchUserChatNotifications(chatId) {
         try {
-            const response = await axios.get('http://localhost:8080/notifications-counter?chatId='
-                + chatId + "&userId=" + cookies.LoggedUserId);
+            const response = await axios.get('http://localhost:8080/notifications-counter?chatId=' + chatId);
             return response.data
         } catch (error) {
             console.error(error);
@@ -43,7 +42,7 @@ const UserPanel = () => {
     useEffect(() => {
     async function checkNewMessages() {
         try {
-            const response = await axios.get('http://localhost:8080/unread-chats?userId=' + cookies.LoggedUserId);
+            const response = await axios.get('http://localhost:8080/unread-chats');
             setUnreadChats(response.data);
             if(response.data ===0){
                 let notificationSpan = document.getElementById("new-message");
@@ -82,8 +81,7 @@ const UserPanel = () => {
     useEffect(() => {
         const fetchUserMatch = async () => {
             try {
-                let response = await axios.get('http://localhost:8080/all-matches?userId='
-                    .concat(cookies.LoggedUserId));
+                let response = await axios.get('http://localhost:8080/all-matches');
                 setCookie("Matches", response.data);
             } catch (error) {
                 console.error(error);
@@ -94,8 +92,7 @@ const UserPanel = () => {
 
     const fetchUserChats = async () => {
         try {
-            let response = await axios.get('http://localhost:8080/all-user-chats?userId='
-                .concat(cookies.LoggedUserId));
+            let response = await axios.get('http://localhost:8080/all-user-chats');
             setChats(response.data)
         } catch (error) {
             console.error("Error loading chats:", error);
@@ -105,8 +102,7 @@ const UserPanel = () => {
 
     const handleButtonLikesClick = async (divId) => {
         try {
-            let response = await axios.get('http://localhost:8080/likes-received?userId='
-                .concat(cookies.LoggedUserId));
+            let response = await axios.get('http://localhost:8080/likes-received');
             console.log(response.data)
             setLikes(response.data)
         } catch (error) {

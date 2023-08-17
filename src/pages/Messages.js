@@ -18,7 +18,7 @@ const Messages = () => {
     async function getChatNotificationsCounter() {
         try {
             let response = await axios.get('http://localhost:8080/notifications-counter?chatId='
-                + cookies.CurrentChat.id + "&userId=" + cookies.LoggedUserId);
+                + cookies.CurrentChat.id);
             setNotificationCounter(response.data);
         } catch (err) {
             console.log(err);
@@ -27,7 +27,7 @@ const Messages = () => {
 
     async function getMessages() {
         try {
-            let response = await axios.get('http://localhost:8080/chat-messages?chatId='
+            let response = await axios.get('http://localhost:8080/messages?chatId='
                 .concat(cookies.CurrentChat.id));
             setMessages(response.data);
         } catch (err) {
@@ -111,7 +111,7 @@ const Messages = () => {
         async function updateChatNotificationsCounter() {
         try {
              await axios.put('http://localhost:8080/notifications-counter?chatId='
-                + cookies.CurrentChat.id + "&userId=" + cookies.LoggedUserId);
+                + cookies.CurrentChat.id);
         } catch (err) {
             console.log(err);
         }
