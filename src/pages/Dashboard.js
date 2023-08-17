@@ -11,12 +11,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const config = {
-                    headers: {
-                        Authorization: sessionStorage.getItem("jwtToken"),
-                    },
-                };
-                const response = await axios.get(`http://localhost:8080/get-swipe-users?userId=${cookies.LoggedUserId}`, config);
+                const response = await axios.get(`http://localhost:8080/get-swipe-users?userId=${cookies.LoggedUserId}`);
                 setCards(response.data);
             } catch (error) {
                 console.error("Wystąpił błąd podczas pobierania użytkowników:", error);
@@ -28,17 +23,11 @@ const Dashboard = () => {
 
     const saveLeftSwipe = async (swipedProfileId) => {
         try {
-            const config = {
-                headers: {
-                    Authorization: sessionStorage.getItem("jwtToken"),
-                },
-            };
-
             const data = {
                 userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
             };
 
-            const response = await axios.post("http://localhost:8080/swipe-left", data, config);
+            const response = await axios.post("http://localhost:8080/swipe-left", data)
             console.log(response.data);
         } catch (error) {
             console.error("Wystąpił błąd podczas zapisywania odrzuconego przesunięcia:", error);
@@ -46,17 +35,11 @@ const Dashboard = () => {
     };
     const saveRightSwipe = async (swipedProfileId) => {
         try {
-            const config = {
-                headers: {
-                    Authorization: sessionStorage.getItem("jwtToken"),
-                },
-            };
-
             const data = {
                 userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
             };
 
-            const response = await axios.post("http://localhost:8080/swipe-right", data, config);
+            const response = await axios.post("http://localhost:8080/swipe-right", data);
             if (response.data === "match") {
                 alert("It's a match!!")
             }

@@ -120,6 +120,8 @@ nav .logo-container .logo {
 }
 .onboarding {
   border-top: solid 1px rgb(213, 213, 213);
+  background-image: url("images/background.jpg");
+  color: white;
 
 }
 
@@ -583,5 +585,22 @@ background-color: inherit;
 #new-message{
   color: darkgoldenrod;
   font-size: large;
+}
+.settings-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  background-color: transparent;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.settings-button:hover {
+  background-color: #4b4f5a;
 }
 

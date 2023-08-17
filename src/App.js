@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import LikeProfile from "./pages/LikeProfile";
 import Messages from "./pages/Messages";
 import axios from "axios";
+import EditPersonalInfo from "./pages/EditPersonalInfo";
 function App() {
   axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
 
@@ -21,6 +22,8 @@ function App() {
       <Route path={"/profile"} element={<PrivateRoute><Profile /></PrivateRoute>}></Route>
       <Route path={"/like-profile"} element={<PrivateRoute><LikeProfile /></PrivateRoute>}></Route>
       <Route path={"/messages"} element={<PrivateRoute><Messages /></PrivateRoute>}></Route>
+      <Route path={"/edit-personal-info"} element={<PrivateRoute><EditPersonalInfo /></PrivateRoute>}></Route>
+
     </Routes>
   </BrowserRouter>
   );

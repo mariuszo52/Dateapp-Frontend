@@ -22,7 +22,6 @@ function Login() {
                     const data = response.data;
                     setCookies("LoggedUserId", data.userId);
                     sessionStorage.setItem('jwtToken', 'Bearer '.concat(data.jwt));
-                    axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
                     navigate("/dashboard")
                 }
             } catch (error) {

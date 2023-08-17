@@ -16,7 +16,6 @@ const UserPanel = () => {
 
     useEffect(() => {
         const fetchUserInfo = async () => {
-            axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
             try {
 
                 const response = await axios.get(
@@ -83,14 +82,8 @@ const UserPanel = () => {
     useEffect(() => {
         const fetchUserMatch = async () => {
             try {
-                const config = {
-                    headers: {
-                        Authorization: sessionStorage.getItem("jwtToken"),
-                    },
-                };
-
                 let response = await axios.get('http://localhost:8080/all-matches?userId='
-                    .concat(cookies.LoggedUserId), config);
+                    .concat(cookies.LoggedUserId));
                 setCookie("Matches", response.data);
             } catch (error) {
                 console.error(error);
@@ -112,14 +105,8 @@ const UserPanel = () => {
 
     const handleButtonLikesClick = async (divId) => {
         try {
-            const config = {
-                headers: {
-                    Authorization: sessionStorage.getItem('jwtToken')
-                },
-            };
-
             let response = await axios.get('http://localhost:8080/likes-received?userId='
-                .concat(cookies.LoggedUserId), config);
+                .concat(cookies.LoggedUserId));
             console.log(response.data)
             setLikes(response.data)
         } catch (error) {

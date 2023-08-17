@@ -10,7 +10,9 @@ const Profile = () => {
  function handleClick(){
      navigate("/dashboard")
  }
- console.log(cookies.UserInfo)
+ function handlePersonalInfoButton(){
+    navigate("/edit-personal-info")
+ }
 
     return (
         <div className="dashboard">
@@ -21,7 +23,7 @@ const Profile = () => {
                 <div className={"settings"}>
                     <h1>Settings</h1>
                     <hr></hr>
-                    <h2>Email</h2>
+                    <button onClick={handlePersonalInfoButton} className={"settings-button"}>Personal Info</button>
                     <hr></hr>
                     <h2>Password</h2>
                     <hr></hr>
