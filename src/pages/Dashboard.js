@@ -5,6 +5,7 @@ import axios from "axios";
 import {useCookies} from "react-cookie";
 
 const Dashboard = () => {
+    axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
     const [cards, setCards] = useState([]);
     const [cookies] = useCookies(["LoggedUserId"]);
 
@@ -26,11 +27,10 @@ const Dashboard = () => {
             const data = {
                 userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
             };
-
-            const response = await axios.post("http://localhost:8080/swipe-left", data)
+            const response = await axios.post("http://localhost:8080/swipe-left", data);
             console.log(response.data);
         } catch (error) {
-            console.error("Wystąpił błąd podczas zapisywania odrzuconego przesunięcia:", error);
+            console.error(error);
         }
     };
     const saveRightSwipe = async (swipedProfileId) => {
@@ -44,7 +44,7 @@ const Dashboard = () => {
                 alert("It's a match!!")
             }
         } catch (error) {
-            console.error("Wystąpił błąd podczas zapisywania odrzuconego przesunięcia:", error);
+            console.error(error);
         }
     };
 
@@ -53,7 +53,7 @@ const Dashboard = () => {
             saveLeftSwipe(swipedProfileId).then(r => console.log("swiped left"));
         }
         if (dir === "right") {
-            saveRightSwipe(swipedProfileId).then(r => console.log("swipped right"))
+            saveRightSwipe(swipedProfileId).then(r => console.log("swiped right"))
         }
     };
 

@@ -67,7 +67,8 @@ const Messages = () => {
     useEffect(() => {
         async function getMatchedUserInfo() {
             try {
-                let response = await axios.get('http://localhost:8080/userinfo?userId='.concat(cookies.MatchedUserId));
+                let response =
+                    await axios.get('http://localhost:8080/matched-user-info?userId='.concat(cookies.MatchedUserId));
                 setMatchedUserInfo(response.data);
             } catch (err) {
                 console.log(err);

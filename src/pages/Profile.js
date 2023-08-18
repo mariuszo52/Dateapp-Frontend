@@ -14,6 +14,28 @@ const Profile = () => {
     navigate("/edit-personal-info")
  }
 
+    function handleLogout() {
+     try {
+         let cookies = document.cookie.split(";");
+
+         for (let i = 0; i < cookies.length; i++) {
+             let cookie = cookies[i];
+             let eqPos = cookie.indexOf("=");
+             let name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+
+             if (name.startsWith("http://localhost:3000")) {
+                 document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+             }
+         }
+         sessionStorage.clear()
+         localStorage.clear()
+     }catch (error){
+         console.log(error)
+     }
+        navigate("/login")
+
+    }
+
     return (
         <div className="dashboard">
             <div className={"settings-container"}>
@@ -27,7 +49,7 @@ const Profile = () => {
                     <hr></hr>
                     <h2>Password</h2>
                     <hr></hr>
-                    <h2>Logout</h2>
+                    <button onClick={handleLogout} className={"settings-button"}>Logout</button>
                     <hr></hr>
                     <h2>Delete account</h2>
                 </div>

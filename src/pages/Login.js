@@ -12,7 +12,6 @@ function Login() {
     });
     const [, setCookies] = useCookies();
     const navigate = useNavigate();
-    const jwtToken = sessionStorage.getItem('jwtToken');
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
@@ -46,7 +45,7 @@ function Login() {
                            setCredentials({...credentials, password: e.target.value})}/>
                 <input type={"submit"} name={"submit"}></input>
             </form>
-            <h1>{jwtToken}</h1>
+            {sessionStorage.getItem('jwtToken')}
         </div>
     );
 }

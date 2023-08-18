@@ -17,10 +17,7 @@ const UserPanel = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-
-                const response = await axios.get(
-                    `http://localhost:8080/userinfo?userId=${cookies.LoggedUserId}`
-                );
+                const response = await axios.get(`http://localhost:8080/user-info?userId=${cookies.LoggedUserId}`);
                 setUserInfo(response.data);
                 setCookie("UserInfo", response.data)
             } catch (error) {
