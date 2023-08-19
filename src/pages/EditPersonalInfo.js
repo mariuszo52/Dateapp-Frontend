@@ -1,7 +1,8 @@
-import {  useState } from "react";
+import React, {  useState } from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
+import Cities from "../components/Cities";
 
 
 function EditPersonalInfo() {
@@ -56,12 +57,16 @@ function EditPersonalInfo() {
                     />
                     <label htmlFor="location">Location</label>
                     <input
-                        id="location"
                         type="text"
+                        placeholder={"Warsaw"}
+                        id="location"
                         name="location"
+                        list="location-list"
+                        required={true}
                         value={formData.location}
                         onChange={handleChange}
                     />
+                    <Cities formData={formData}/>
                     <label>Birthday</label>
                     <div className="multiple-input-container">
                         <input

@@ -6,14 +6,16 @@ import axios from "axios";
 import UserPanel from "../components/UserPanel";
 
 const Messages = () => {
-    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat", "MatchedUserId"]);
+    const [cookies] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"]);
     const [stompClient, setStompClient] = useState();
     const [messages, setMessages] = useState([]);
     const [matchedUserInfo, setMatchedUserInfo] = useState();
     const [textArea, setTextArea] = useState("");
     const messageContainerRef = useRef(null);
-    const [notificationCounter, setNotificationCounter] = useState();
+    const [setNotificationCounter] = useState();
     const [ticketText, setTicketText] = useState("");
+    const [matchedUserId, setMatchedUserId] = useState(null);
+    const [newMessage, setNewMessage] = useState(0)
 
     async function getChatNotificationsCounter() {
         try {
@@ -53,14 +55,12 @@ const Messages = () => {
     useEffect(() => {
         function checkMatchUserId() {
             const participants = cookies.CurrentChat.participantsIds;
-
             if (cookies.LoggedUserId === participants[0].toString()) {
-                setCookie("MatchedUserId", participants[1]);
-            } else {
-                setCookie("MatchedUserId", participants[0]);
+                setMatchedUserId(participants[1])
+           } else {
+                setMatchedUserId(participants[0])
             }
         }
-
         checkMatchUserId();
     }, []);
 
@@ -68,17 +68,17 @@ const Messages = () => {
         async function getMatchedUserInfo() {
             try {
                 let response =
-                    await axios.get('http://localhost:8080/matched-user-info?userId='.concat(cookies.MatchedUserId));
+                    await axios.get('http://localhost:8080/matched-user-info?userId='.concat(matchedUserId));
                 setMatchedUserInfo(response.data);
             } catch (err) {
                 console.log(err);
             }
         }
-
-        if (cookies.MatchedUserId) {
+        if(matchedUserId != null) {
             getMatchedUserInfo();
         }
-    }, []);
+
+    }, [matchedUserId]);
 
     function showMessageOutput(messageOutput) {
         const message = document.getElementById("message");
@@ -125,6 +125,7 @@ const Messages = () => {
                 client.connect([], function (frame) {
                     console.log('Connected: ' + frame);
                     client.subscribe('/topic/'.concat(cookies.CurrentChat.id), function (messageOutput) {
+                        setNewMessage(newMessage => newMessage + 1);
                         getChatNotificationsCounter()
                         showMessageOutput(JSON.parse(messageOutput.body))
                         setTicketText("");
@@ -198,7 +199,7 @@ const Messages = () => {
 
     return (
         <div className="dashboard">
-            <UserPanel />
+            <UserPanel newMessage={newMessage} />
             <div className="messenger-container">
                 <div className={"mess"}>
                     <div className={"messages-container"} ref={messageContainerRef}>

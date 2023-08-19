@@ -1,11 +1,12 @@
 import axios from "axios";
-import { useState } from "react";
+import React, {useState} from "react";
 import {useCookies} from "react-cookie";
+import Cities from "../components/Cities";
 
 
 const UserInfo = () => {
 
-    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo" ])
+    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo"])
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -42,8 +43,10 @@ const UserInfo = () => {
                 console.log(error);
             });
     };
-        return (
-            <>
+
+
+    return (
+        <>
             <div className="onboarding">
                 <form onSubmit={handleSubmit}>
                     <section>
@@ -59,15 +62,16 @@ const UserInfo = () => {
                         />
                         <label htmlFor="location">Location</label>
                         <input
-                            id="location"
                             type="text"
+                            placeholder={"Warsaw"}
+                            id="location"
                             name="location"
+                            list="location-list"
                             required={true}
-                            placeholder="Warsaw"
                             value={formData.location}
                             onChange={handleChange}
                         />
-
+                       <Cities formData={formData}/>
                         <label>Birthday</label>
                         <div className="multiple-input-container">
                             <input
@@ -180,8 +184,8 @@ const UserInfo = () => {
 
                 </form>
             </div>
-                </>
-        );
-    };
+        </>
+    );
+};
 
 export default UserInfo;

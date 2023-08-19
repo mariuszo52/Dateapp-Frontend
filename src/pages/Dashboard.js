@@ -8,6 +8,7 @@ const Dashboard = () => {
     axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
     const [cards, setCards] = useState([]);
     const [cookies] = useCookies(["LoggedUserId"]);
+    const [newMatch, setNewMatch] = useState(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,6 +35,7 @@ const Dashboard = () => {
         }
     };
     const saveRightSwipe = async (swipedProfileId) => {
+        setNewMatch(false)
         try {
             const data = {
                 userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
@@ -42,6 +44,7 @@ const Dashboard = () => {
             const response = await axios.post("http://localhost:8080/swipe-right", data);
             if (response.data === "match") {
                 alert("It's a match!!")
+                setNewMatch(true)
             }
         } catch (error) {
             console.error(error);
@@ -58,7 +61,7 @@ const Dashboard = () => {
     };
 
     return (<div className="dashboard">
-            <UserPanel />
+            <UserPanel newMatch={newMatch} />
             <div className="card-container">
                 {cards?.map((user) => (<TinderCard
                         className="swipe"

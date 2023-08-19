@@ -3,15 +3,16 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
-const UserPanel = () => {
+const UserPanel = ({newMessage, newMatch}) => {
     const navigate = useNavigate();
-    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "Matches", "CurrentChat"])
+    const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"])
     const [, setUserInfo] = useState(cookies.UserInfo);
     const [currentDiv, setCurrentDiv] = useState("matches");
     const [likes, setLikes] = useState([]);
     const [chats, setChats] = useState([]);
+    const [matches, setMatches] = useState([])
     const [chatNotifications, setChatNotifications] = useState({});
-    const [unreadChats, setUnreadChats] = useState();
+    const [unreadChats, setUnreadChats] = useState(0);
 
 
     useEffect(() => {
@@ -40,18 +41,20 @@ const UserPanel = () => {
     async function checkNewMessages() {
         try {
             const response = await axios.get('http://localhost:8080/unread-chats');
+            let notificationSpan = document.getElementById("new-message");
             setUnreadChats(response.data);
-            if(response.data ===0){
-                let notificationSpan = document.getElementById("new-message");
+            if(response.data === 0){
                 notificationSpan.setAttribute("hidden", "true")
-
+            }
+            else {
+                notificationSpan.removeAttribute("hidden")
             }
         } catch (error) {
             console.error(error);
         }
     }
         checkNewMessages();
-    }, [chatNotifications]);
+    }, [chatNotifications, newMessage]);
 
     useEffect(() => {
         async function fetchNotificationsForChats() {
@@ -63,7 +66,7 @@ const UserPanel = () => {
                 if(notificationsData[chat.id] === 0) {
                     notificationSpan?.setAttribute("hidden", "true");
                 }else{
-                    notificationSpan.style.color = "darkgoldenrod";
+                    notificationSpan?.setAttribute('style', 'color: darkgoldenrod;');
                 }
             }
             setChatNotifications(notificationsData);
@@ -79,13 +82,13 @@ const UserPanel = () => {
         const fetchUserMatch = async () => {
             try {
                 let response = await axios.get('http://localhost:8080/all-matches');
-                setCookie("Matches", response.data);
+                setMatches(() => response.data)
             } catch (error) {
                 console.error(error);
             }
         };
         fetchUserMatch();
-    }, [currentDiv]);
+    }, [newMatch]);
 
     const fetchUserChats = async () => {
         try {
@@ -95,6 +98,11 @@ const UserPanel = () => {
             console.error("Error loading chats:", error);
         }
     };
+
+    useEffect(() => {
+        fetchUserChats()
+
+    }, [newMessage]);
 
 
     const handleButtonLikesClick = async (divId) => {
@@ -156,9 +164,10 @@ const UserPanel = () => {
         } else {
             navigate("/messages");
         }
-        resetUnreadMessageCount(chat.id)
-
-
+        resetUnreadMessageCount(chat.id).then(r => console.log(r))
+    }
+    function lastMessageLimited(lastMessage){
+        return lastMessage.length >= 30 ? lastMessage.slice(0, 29) + "..." : lastMessage;
     }
 
     return (
@@ -213,7 +222,7 @@ const UserPanel = () => {
             {currentDiv === "matches" && (
                 <div className="matches" id="matches">
                     <ul>
-                        {cookies.Matches?.map((match, index) => (
+                        {matches?.map((match, index) => (
                             <li
                                 onClick={() => handleShowProfile(match)}
                                 className="match-card"
@@ -245,7 +254,7 @@ const UserPanel = () => {
                                         alt={chat.matchDtos[0].userId}
                                         src={chat.matchDtos[0].matchedUserUrl}
                                     />
-                                    <span className="last-message">{chat.lastMessage}</span>
+                                    <span className="last-message">{lastMessageLimited(chat.lastMessage)}</span>
                                     <span id={"new-message-".concat(chat.id)}>
                                     {chatNotifications[chat.id]}
                                 </span>
@@ -260,7 +269,7 @@ const UserPanel = () => {
                                         alt={chat.matchDtos[1].userId}
                                         src={chat.matchDtos[1].matchedUserUrl}
                                     />
-                                    <span className="last-message">{chat.lastMessage}</span>
+                                    <span className="last-message">{lastMessageLimited(chat.lastMessage)}</span>
                                     <span id={"new-message-".concat(chat.id)}>
                                     {chatNotifications[chat.id]}
                                 </span>
