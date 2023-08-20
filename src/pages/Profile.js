@@ -59,7 +59,7 @@ const Profile = () => {
                     <img src={cookies.UserInfo?.url} alt={"User"}/>
                     <p>{cookies.UserInfo?.firstName} <span>{cookies.UserInfo?.age}</span></p>
                     <hr></hr>
-                    <p>{cookies.UserInfo?.location}</p>
+                    <p>{cookies.UserInfo?.locationDto.name}</p>
                     <hr></hr>
                     <p>{cookies.UserInfo?.genderIdentity}</p>
                     <hr></hr>

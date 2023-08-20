@@ -3,22 +3,24 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
-const UserPanel = ({newMessage, newMatch}) => {
+const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"])
-    const [, setUserInfo] = useState(cookies.UserInfo);
+    const [, setUserInfo] = useState();
     const [currentDiv, setCurrentDiv] = useState("matches");
     const [likes, setLikes] = useState([]);
     const [chats, setChats] = useState([]);
     const [matches, setMatches] = useState([])
     const [chatNotifications, setChatNotifications] = useState({});
     const [unreadChats, setUnreadChats] = useState(0);
+    const [newDistance, setNewDistance] = useState();
 
 
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
                 const response = await axios.get(`http://localhost:8080/user-info?userId=${cookies.LoggedUserId}`);
+                console.log("UserInfo" + response.data.location)
                 setUserInfo(response.data);
                 setCookie("UserInfo", response.data)
             } catch (error) {
@@ -169,12 +171,33 @@ const UserPanel = ({newMessage, newMatch}) => {
     function lastMessageLimited(lastMessage){
         return lastMessage.length >= 30 ? lastMessage.slice(0, 29) + "..." : lastMessage;
     }
+    const handleChange = (event) =>{
+        const newDistancee = event.target.value;
+        onDistanceChange(newDistancee);
+        setNewDistance(newDistancee)
+        console.log(newDistance)
+
+    }
+
+    const submitDistance =(event) => {
+        event.preventDefault()
+        axios.get("http://localhost:8080/get-swipe-users?distance=" + newDistance )
+            .then(r => console.log(r.data))
+
+    }
 
     return (
         <div className="user-panel">
             <div className="profile">
                 <img src={cookies.UserInfo?.url} alt="User" onClick={handleImageClick}/>
                 <h2>{cookies.UserInfo?.firstName}</h2>
+            </div>
+            <div>
+                <label>Max distance</label>
+                <form>
+                    <input onChange={handleChange} type={"text"}/>
+                    <input onClick={submitDistance} type={"submit"}/>
+                </form>
             </div>
 
             <div className="change-section">

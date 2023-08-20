@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
@@ -8,39 +8,90 @@ import Cities from "../components/Cities";
 function EditPersonalInfo() {
     const [cookies, setCookies] = useCookies(["UserInfo"]);
     const navigate = useNavigate();
+    let [cities, setCities] = useState([]);
     const [formData, setFormData] = useState({
-        firstName: cookies.UserInfo.firstName,
-        location: cookies.UserInfo.location,
-        dayOfBirth: cookies.UserInfo.dayOfBirth,
-        monthOfBirth: cookies.UserInfo.monthOfBirth,
-        yearOfBirth: cookies.UserInfo.yearOfBirth,
-        url: cookies.UserInfo.url,
-        about: cookies.UserInfo.about,
+        firstName: "",
+        locationDto: {
+            name: "",
+            latitude:"",
+            longitude:"",
+            country: ""
+        },
+        dayOfBirth: "",
+        monthOfBirth: "",
+        yearOfBirth: "",
+        genderIdentity: "man",
+        genderInterest: "woman",
+        url: "",
+        about: "",
+        userId: cookies.LoggedUserId
     });
+
     const handleChange = (e) => {
-        const value = e.target.value;
+        const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         const name = e.target.name;
 
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.put('http://localhost:8080/user-info-edit', formData);
-            let success = response.status === 201;
-            if(success) {
-                setCookies("UserInfo", response.data)
-            navigate("/profile")
-            }
-        } catch (error) {
-            console.error(error);
+        if (name.startsWith("locationDto.")) {
+            const locationDtoField = name.split(".")[1];
+            setFormData((prevState) => ({
+                ...prevState,
+                locationDto: {
+                    ...prevState.locationDto,
+                    [locationDtoField]: value,
+                },
+            }));
+        } else {
+            setFormData((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
         }
     };
+
+    useEffect(() => {
+            function getCities() {
+                console.log(formData.locationDto.name)
+
+                const headers = {
+                    'X-Api-Key': '2NSMNHamzZBFVHUZo/9kIg==B4ZUziZJPNlfUP7Z'
+                }
+                axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + formData.locationDto.name, {headers: headers})
+                    .then(r => {
+                        setCities(r.data)
+
+                        setFormData(prevFormData => ({
+                            ...prevFormData,
+                            locationDto: {
+                                ...prevFormData.locationDto,
+                                latitude: r.data[0].latitude,
+                                longitude: r.data[0].longitude,
+                                country: r.data[0].country
+                            }
+                        }));
+                    })}
+
+
+
+            if (formData.locationDto.name?.length >= 3) {
+                getCities()
+            }
+        }, [formData.locationDto.name]
+    );
+
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        axios
+            .post("http://localhost:8080/userinfo", formData)
+            .then((response) => {
+                setCookies("UserInfo", formData);
+                window.location.href = "/login";
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
 
 
     return (
@@ -55,18 +106,23 @@ function EditPersonalInfo() {
                         value={formData.firstName}
                         onChange={handleChange}
                     />
-                    <label htmlFor="location">Location</label>
+                    <label htmlFor="locationDtoName">location</label>
                     <input
                         type="text"
-                        placeholder={"Warsaw"}
-                        id="location"
-                        name="location"
-                        list="location-list"
+                        placeholder="Warsaw"
+                        id="locationDtoName"
+                        name="locationDto.name"
+                        list="locationDto-list"
                         required={true}
-                        value={formData.location}
+                        value={formData.locationDto.name}
                         onChange={handleChange}
                     />
-                    <Cities formData={formData}/>
+                    <datalist id="locationDto-list">
+                        {cities.map((city, index) => (
+                            <option key={index} value={city.name}>{city.name}</option>
+                        ))}
+                    </datalist>
+
                     <label>Birthday</label>
                     <div className="multiple-input-container">
                         <input

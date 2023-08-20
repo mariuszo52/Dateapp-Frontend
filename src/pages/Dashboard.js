@@ -9,11 +9,16 @@ const Dashboard = () => {
     const [cards, setCards] = useState([]);
     const [cookies] = useCookies(["LoggedUserId"]);
     const [newMatch, setNewMatch] = useState(false)
+    const [distance, setDistance] = useState(10000000);
+    const handleDistanceChange = (newDistance) => {
+        setDistance(newDistance);
+    };
+
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/get-swipe-users`);
+                const response = await axios.get(`http://localhost:8080/get-swipe-users?distance=` + distance);
                 setCards(response.data);
             } catch (error) {
                 console.error(error);
@@ -61,7 +66,7 @@ const Dashboard = () => {
     };
 
     return (<div className="dashboard">
-            <UserPanel newMatch={newMatch} />
+            <UserPanel newMatch={newMatch} onDistanceChange={handleDistanceChange} />
             <div className="card-container">
                 {cards?.map((user) => (<TinderCard
                         className="swipe"

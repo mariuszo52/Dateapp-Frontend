@@ -1,16 +1,20 @@
 import axios from "axios";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
-import Cities from "../components/Cities";
 
 
 const UserInfo = () => {
 
     const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo"])
-
+    let [cities, setCities] = useState([]);
     const [formData, setFormData] = useState({
         firstName: "",
-        location: "",
+        locationDto: {
+            name: "",
+            latitude:"",
+            longitude:"",
+            country: ""
+        },
         dayOfBirth: "",
         monthOfBirth: "",
         yearOfBirth: "",
@@ -25,11 +29,23 @@ const UserInfo = () => {
         const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         const name = e.target.name;
 
-        setFormData((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
+        if (name.startsWith("locationDto.")) {
+            const locationDtoField = name.split(".")[1];
+            setFormData((prevState) => ({
+                ...prevState,
+                locationDto: {
+                    ...prevState.locationDto,
+                    [locationDtoField]: value,
+                },
+            }));
+        } else {
+            setFormData((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
+        }
     };
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -44,6 +60,35 @@ const UserInfo = () => {
             });
     };
 
+    useEffect(() => {
+            function getCities() {
+                console.log(formData.locationDto.name)
+
+                const headers = {
+                    'X-Api-Key': '2NSMNHamzZBFVHUZo/9kIg==B4ZUziZJPNlfUP7Z'
+                }
+                axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + formData.locationDto.name, {headers: headers})
+                    .then(r => {
+                        setCities(r.data)
+
+                        setFormData(prevFormData => ({
+                            ...prevFormData,
+                            locationDto: {
+                                ...prevFormData.locationDto,
+                                latitude: r.data[0].latitude,
+                                longitude: r.data[0].longitude,
+                                country: r.data[0].country
+                            }
+                        }));
+                    })}
+
+
+
+            if (formData.locationDto.name?.length >= 3) {
+                getCities()
+            }
+        }, [formData.locationDto.name]
+    );
 
     return (
         <>
@@ -60,18 +105,22 @@ const UserInfo = () => {
                             value={formData.firstName}
                             onChange={handleChange}
                         />
-                        <label htmlFor="location">Location</label>
+                        <label htmlFor="locationDtoName">location</label>
                         <input
                             type="text"
-                            placeholder={"Warsaw"}
-                            id="location"
-                            name="location"
-                            list="location-list"
+                            placeholder="Warsaw"
+                            id="locationDtoName"
+                            name="locationDto.name"
+                            list="locationDto-list"
                             required={true}
-                            value={formData.location}
+                            value={formData.locationDto.name}
                             onChange={handleChange}
                         />
-                       <Cities formData={formData}/>
+                        <datalist id="locationDto-list">
+                            {cities.map((city, index) => (
+                                <option key={index} value={city.name}>{city.name}</option>
+                            ))}
+                        </datalist>
                         <label>Birthday</label>
                         <div className="multiple-input-container">
                             <input
