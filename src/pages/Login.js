@@ -6,13 +6,32 @@ import enter from "../images/enter.png";
 
 
 function Login() {
+    const [cookies, setCookie] = useCookies(["UserInfo", "LoggedUserId"])
     const [credentials, setCredentials] = useState({
         email: "",
         password: "",
     });
     const [, setCookies] = useCookies();
     const navigate = useNavigate();
-        const handleSubmit = async (event) => {
+
+    const fetchUserInfo = async () => {
+        try {
+            let config = {
+                headers: {
+                    Authorization: sessionStorage.getItem("jwtToken"),
+                }
+            }
+
+            const response = await axios.get(`http://localhost:8080/user-info?userId=${cookies.LoggedUserId}`,config);
+            console.log("UserInfo" + response.data.location)
+            setCookie("UserInfo", response.data)
+            navigate("/dashboard")
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleSubmit = async (event) => {
             event.preventDefault();
             try {
                 const response = await axios.post('http://localhost:8080/login', credentials);
@@ -21,11 +40,11 @@ function Login() {
                     const data = response.data;
                     setCookies("LoggedUserId", data.userId);
                     sessionStorage.setItem('jwtToken', 'Bearer '.concat(data.jwt));
-                    navigate("/dashboard")
                 }
             } catch (error) {
                 console.error(error);
             }
+            fetchUserInfo()
         };
 
     return (

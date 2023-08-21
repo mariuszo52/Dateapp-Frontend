@@ -7,9 +7,9 @@ import {useCookies} from "react-cookie";
 const Dashboard = () => {
     axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
     const [cards, setCards] = useState([]);
-    const [cookies] = useCookies(["LoggedUserId"]);
+    const [cookies] = useCookies(["LoggedUserId", "UserInfo"]);
     const [newMatch, setNewMatch] = useState(false)
-    const [distance, setDistance] = useState(10000000);
+    const [distance, setDistance] = useState(cookies.UserInfo.maxDistance);
     const handleDistanceChange = (newDistance) => {
         setDistance(newDistance);
     };
