@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
@@ -13,39 +13,41 @@ function Login() {
     });
     const [, setCookies] = useCookies();
     const navigate = useNavigate();
-
-    const fetchUserInfo = async () => {
+    const fetchUserInfo = async (token) => {
         try {
             let config = {
                 headers: {
-                    Authorization: sessionStorage.getItem("jwtToken"),
-                }
-            }
-
-            const response = await axios.get(`http://localhost:8080/user-info?userId=${cookies.LoggedUserId}`,config);
-            console.log("UserInfo" + response.data.location)
-            setCookie("UserInfo", response.data)
-            navigate("/dashboard")
+                    Authorization: token,
+                },
+            };
+            const response = await axios.get(`http://localhost:8080/logged-user-info`, config);
+            console.log("UserInfo", response.data.location);
+            setCookie("UserInfo", response.data);
+            setCookie("LoggedUserId", response.data.userId);
+            navigate("/dashboard");
         } catch (error) {
             console.error(error);
         }
     };
 
+
     const handleSubmit = async (event) => {
             event.preventDefault();
-            try {
+        try {
                 const response = await axios.post('http://localhost:8080/login', credentials);
-                let success = response.status === 200;
+                let success = response.status === 201;
                 if(success) {
-                    const data = response.data;
-                    setCookies("LoggedUserId", data.userId);
-                    sessionStorage.setItem('jwtToken', 'Bearer '.concat(data.jwt));
+                    alert(response.data)
+                    const token = 'Bearer '.concat(response.data)
+                    fetchUserInfo(token);
+
+                    sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data));
                 }
             } catch (error) {
                 console.error(error);
             }
-            fetchUserInfo()
-        };
+
+    };
 
     return (
         <div className={'login-page'}>
