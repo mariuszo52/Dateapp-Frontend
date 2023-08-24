@@ -1,13 +1,15 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
+import {useNavigate} from 'react-router-dom'
 
 
 const UserInfo = () => {
 
-    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo"])
+    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo", "RegisterData"])
     let [cities, setCities] = useState([]);
-    const [formData, setFormData] = useState({
+    const navigate = useNavigate();
+    const [userInfo, setUserInfo] = useState({
         firstName: "",
         locationDto: {
             name: "",
@@ -24,14 +26,17 @@ const UserInfo = () => {
         about: "",
         userId: cookies.LoggedUserId
     });
-
+    const userRegisterDto = {
+        ...cookies.RegisterData,
+        userInfo: userInfo
+    };
     const handleChange = (e) => {
         const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         const name = e.target.name;
 
         if (name.startsWith("locationDto.")) {
             const locationDtoField = name.split(".")[1];
-            setFormData((prevState) => ({
+            setUserInfo((prevState) => ({
                 ...prevState,
                 locationDto: {
                     ...prevState.locationDto,
@@ -39,7 +44,7 @@ const UserInfo = () => {
                 },
             }));
         } else {
-            setFormData((prevState) => ({
+            setUserInfo((prevState) => ({
                 ...prevState,
                 [name]: value,
             }));
@@ -47,47 +52,42 @@ const UserInfo = () => {
     };
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        axios
-            .post("http://localhost:8080/userinfo", formData)
-            .then((response) => {
-                setCookies("UserInfo", formData);
-                window.location.href = "/login";
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+       await axios.post('http://localhost:8080/register', userRegisterDto)
+           .then(r => console.log(r.data))
+        navigate('/login');
     };
+
 
     useEffect(() => {
             function getCities() {
-                console.log(formData.locationDto.name)
+                console.log(userInfo.locationDto.name)
 
                 const headers = {
                     'X-Api-Key': '2NSMNHamzZBFVHUZo/9kIg==B4ZUziZJPNlfUP7Z'
                 }
-                axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + formData.locationDto.name, {headers: headers})
+                axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + userInfo.locationDto.name, {headers: headers})
                     .then(r => {
                         setCities(r.data)
-
-                        setFormData(prevFormData => ({
-                            ...prevFormData,
+                        console.log(r.data)
+                        setUserInfo(prevuserInfo => ({
+                            ...prevuserInfo,
                             locationDto: {
-                                ...prevFormData.locationDto,
-                                latitude: r.data[0].latitude,
-                                longitude: r.data[0].longitude,
-                                country: r.data[0].country
+                                ...prevuserInfo.locationDto,
+                                latitude: r.data[0]?.latitude,
+                                longitude: r.data[0]?.longitude,
+                                country: r.data[0]?.country
                             }
-                        }));
+                        }))
                     })}
 
 
 
-            if (formData.locationDto.name?.length >= 3) {
+            if (userInfo.locationDto.name?.length >= 3) {
                 getCities()
             }
-        }, [formData.locationDto.name]
+        }, [userInfo.locationDto.name]
     );
 
     return (
@@ -102,7 +102,7 @@ const UserInfo = () => {
                             name="firstName"
                             placeholder="First Name"
                             required={true}
-                            value={formData.firstName}
+                            value={userInfo.firstName}
                             onChange={handleChange}
                         />
                         <label htmlFor="locationDtoName">location</label>
@@ -113,7 +113,7 @@ const UserInfo = () => {
                             name="locationDto.name"
                             list="locationDto-list"
                             required={true}
-                            value={formData.locationDto.name}
+                            value={userInfo.locationDto.name}
                             onChange={handleChange}
                         />
                         <datalist id="locationDto-list">
@@ -129,7 +129,7 @@ const UserInfo = () => {
                                 name="dayOfBirth"
                                 placeholder="DD"
                                 required={true}
-                                value={formData.dayOfBirth}
+                                value={userInfo.dayOfBirth}
                                 onChange={handleChange}
                             />
 
@@ -139,7 +139,7 @@ const UserInfo = () => {
                                 name="monthOfBirth"
                                 placeholder="MM"
                                 required={true}
-                                value={formData.monthOfBirth}
+                                value={userInfo.monthOfBirth}
                                 onChange={handleChange}
                             />
 
@@ -149,7 +149,7 @@ const UserInfo = () => {
                                 name="yearOfBirth"
                                 placeholder="YYYY"
                                 required={true}
-                                value={formData.yearOfBirth}
+                                value={userInfo.yearOfBirth}
                                 onChange={handleChange}
                             />
                         </div>
@@ -162,7 +162,7 @@ const UserInfo = () => {
                                 name="genderIdentity"
                                 value="man"
                                 onChange={handleChange}
-                                checked={formData.genderIdentity === "man"}
+                                checked={userInfo.genderIdentity === "man"}
                             />
                             <label htmlFor="manGenderIdentity">Man</label>
                             <input
@@ -171,7 +171,7 @@ const UserInfo = () => {
                                 name="genderIdentity"
                                 value="woman"
                                 onChange={handleChange}
-                                checked={formData.genderIdentity === "woman"}
+                                checked={userInfo.genderIdentity === "woman"}
                             />
                             <label htmlFor="womanGenderIdentity">Woman</label>
                         </div>
@@ -185,7 +185,7 @@ const UserInfo = () => {
                                 name="genderInterest"
                                 value="man"
                                 onChange={handleChange}
-                                checked={formData.genderInterest === "man"}
+                                checked={userInfo.genderInterest === "man"}
                             />
                             <label htmlFor="manGenderInterest">Man</label>
                             <input
@@ -194,7 +194,7 @@ const UserInfo = () => {
                                 name="genderInterest"
                                 value="woman"
                                 onChange={handleChange}
-                                checked={formData.genderInterest === "woman"}
+                                checked={userInfo.genderInterest === "woman"}
                             />
                             <label htmlFor="womanGenderInterest">Woman</label>
 
@@ -207,7 +207,7 @@ const UserInfo = () => {
                             name="about"
                             required={true}
                             placeholder="I like long walks..."
-                            value={formData.about}
+                            value={userInfo.about}
                             onChange={handleChange}
                         />
 
@@ -225,7 +225,7 @@ const UserInfo = () => {
                             required={true}
                         />
                         <div className="photo-container">
-                            {formData.url && <img src={formData.url} alt="profile pic preview"/>}
+                            {userInfo.url && <img src={userInfo.url} alt="profile pic preview"/>}
                         </div>
 
 

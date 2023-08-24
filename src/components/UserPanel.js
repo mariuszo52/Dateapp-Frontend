@@ -6,7 +6,6 @@ import {useNavigate} from "react-router-dom";
 const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"])
-    const [, setUserInfo] = useState();
     const [currentDiv, setCurrentDiv] = useState("matches");
     const [likes, setLikes] = useState([]);
     const [chats, setChats] = useState([]);
@@ -15,21 +14,6 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
     const [unreadChats, setUnreadChats] = useState(0);
     const [newDistance, setNewDistance] = useState();
 
-
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8080/user-info?userId=${cookies.LoggedUserId}`);
-                console.log("UserInfo" + response.data.location)
-                setUserInfo(response.data);
-                setCookie("UserInfo", response.data)
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchUserInfo();
-    }, []);
 
     async function fetchUserChatNotifications(chatId) {
         try {

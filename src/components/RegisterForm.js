@@ -6,34 +6,21 @@ import {useCookies} from "react-cookie";
 
 function RegisterForm() {
 
-    const [message, setMessage] = useState(null);
     const [, setCookie] = useCookies(["LoggedUserId"]);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
     });
     let navigate = useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
-        try {
-            const response = await axios.post('http://localhost:8080/register', formData);
-            const success = response.status === 201
-            if (success) {
-                console.log("response".concat(response.data))
-                setCookie("LoggedUserId", response.data)
+            console.log(formData)
+            setCookie("RegisterData", formData);
                 navigate('/info');
-
-            }
-        } catch (err) {
-            setMessage(err.response.data)
-            console.log(message);
-        }
-
-    };
+            };
     return (
         <>
-            {message && <p className="notification">{message}</p>}
             <form onSubmit={handleSubmit} className={"register-form"}>
                 <label>Email</label>
                 <input type={"email"} name={"email"}

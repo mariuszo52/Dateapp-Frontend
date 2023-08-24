@@ -21,9 +21,7 @@ function Login() {
                 },
             };
             const response = await axios.get(`http://localhost:8080/logged-user-info`, config);
-            console.log("UserInfo", response.data.location);
             setCookie("UserInfo", response.data);
-            setCookie("LoggedUserId", response.data.userId);
             navigate("/dashboard");
         } catch (error) {
             console.error(error);
@@ -34,13 +32,11 @@ function Login() {
     const handleSubmit = async (event) => {
             event.preventDefault();
         try {
-                const response = await axios.post('http://localhost:8080/login', credentials);
+                const response = await axios.post(`http://localhost:8080/login`, credentials);
                 let success = response.status === 201;
                 if(success) {
-                    alert(response.data)
                     const token = 'Bearer '.concat(response.data)
                     fetchUserInfo(token);
-
                     sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data));
                 }
             } catch (error) {

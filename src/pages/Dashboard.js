@@ -7,13 +7,25 @@ import {useCookies} from "react-cookie";
 const Dashboard = () => {
     axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
     const [cards, setCards] = useState([]);
-    const [cookies] = useCookies(["LoggedUserId", "UserInfo"]);
+    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo"]);
     const [newMatch, setNewMatch] = useState(false)
     const [distance, setDistance] = useState(cookies.UserInfo.maxDistance);
     const handleDistanceChange = (newDistance) => {
         setDistance(newDistance);
     };
 
+    useEffect(() => {
+            const fetchLoggedUserId = async () => {
+                try {
+                    let response = await axios.get('http://localhost:8080/logged-user-id');
+                    setCookies("LoggedUserId", response.data)
+                }catch (error){
+                    console.log(error)
+                }
+            };
+
+        fetchLoggedUserId();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {

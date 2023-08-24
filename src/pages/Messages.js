@@ -83,9 +83,13 @@ const Messages = () => {
     function showMessageOutput(messageOutput) {
         const message = document.getElementById("message");
         const div = document.createElement('div');
-        if (messageOutput.fromUserId.toString() === cookies.LoggedUserId) {
+        if (messageOutput.fromUserId === cookies.LoggedUserId) {
+            console.log("od kogo id " + messageOutput.fromUserId)
+            console.log("logged id "  + cookies.LoggedUserId)
             div.setAttribute("class", "message-send-div")
         } else {
+            console.log("od kogo id " + messageOutput.fromUserId)
+            console.log("logged id "  + cookies.LoggedUserId)
             div.setAttribute("class", "message-received-div")
         }
 
@@ -221,7 +225,7 @@ const Messages = () => {
                 <div className={"message-profile"}>
                     <img src={matchedUserInfo?.url} alt="Matched user"></img>
                     <h1>{matchedUserInfo?.firstName} {matchedUserInfo?.age}</h1>
-                    <p>{matchedUserInfo?.location}</p>
+                    <p>{matchedUserInfo?.locationDto.name}</p>
                     <p>{matchedUserInfo?.genderIdentity}</p>
                     <p>Interested in: {matchedUserInfo?.genderInterest}</p>
                     <p>{matchedUserInfo?.about}</p>
