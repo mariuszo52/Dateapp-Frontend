@@ -6,7 +6,7 @@ import {useCookies} from "react-cookie";
 
 function RegisterForm() {
 
-    const [, setCookie] = useCookies(["LoggedUserId"]);
+    const [, setCookie] = useCookies();
     const [formData, setFormData] = useState({
         email: "",
         password: "",

@@ -12,7 +12,7 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
     const [matches, setMatches] = useState([])
     const [chatNotifications, setChatNotifications] = useState({});
     const [unreadChats, setUnreadChats] = useState(0);
-    const [newDistance, setNewDistance] = useState();
+    const [newDistance, setNewDistance] = useState(cookies.UserInfo.maxDistance);
 
 
     async function fetchUserChatNotifications(chatId) {
@@ -122,6 +122,8 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
         setCookie("profile", profile)
         navigate("/like-profile")
 
+        //dodac zapisywanie do bazy wyboru
+
     }
 
     const handleButtonMessagesClick = async (divId) => {
@@ -155,18 +157,14 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
     function lastMessageLimited(lastMessage){
         return lastMessage.length >= 30 ? lastMessage.slice(0, 29) + "..." : lastMessage;
     }
-    const handleChange = (event) =>{
-        const newDistancee = event.target.value;
-        onDistanceChange(newDistancee);
-        setNewDistance(newDistancee)
-        console.log(newDistance)
-
-    }
 
     const submitDistance =(event) => {
         event.preventDefault()
-        axios.get("http://localhost:8080/get-swipe-users?distance=" + newDistance )
-            .then(r => console.log(r.data))
+        setNewDistance(event.target.form.distance.value)
+        onDistanceChange(event.target.form.distance.value)
+    }
+    const handleDistanceChange = (event) =>{
+        setNewDistance(event.target.form.distance.value)
 
     }
 
@@ -179,8 +177,10 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
             <div>
                 <label>Max distance</label>
                 <form>
-                    <input onChange={handleChange} type={"text"}/>
-                    <input onClick={submitDistance} type={"submit"}/>
+                    <input defaultValue={newDistance}
+                           name="distance" type="range" min="0" max="500" step="10" onChange={handleDistanceChange} />
+                    <input type={"submit"} onClick={submitDistance}/>
+                <h2>Distance: {newDistance}</h2>
                 </form>
             </div>
 
@@ -251,7 +251,7 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
                             className="message-card"
                             key={index}
                         >
-                            {cookies.LoggedUserId === chat.matchDtos[0].userId.toString() ? (
+                            {parseInt(cookies.LoggedUserId) === chat.matchDtos[0].userId ? (
                                 <li>
                                 <span className="first-name">
                                     {chat.matchDtos[0].matchedUserName}

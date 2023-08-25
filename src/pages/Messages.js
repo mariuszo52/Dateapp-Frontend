@@ -12,10 +12,11 @@ const Messages = () => {
     const [matchedUserInfo, setMatchedUserInfo] = useState();
     const [textArea, setTextArea] = useState("");
     const messageContainerRef = useRef(null);
-    const [setNotificationCounter] = useState();
+    const [,setNotificationCounter] = useState();
     const [ticketText, setTicketText] = useState("");
     const [matchedUserId, setMatchedUserId] = useState(null);
     const [newMessage, setNewMessage] = useState(0)
+    const [loggedUserId] = useState(parseInt(cookies.LoggedUserId))
 
     async function getChatNotificationsCounter() {
         try {
@@ -55,7 +56,7 @@ const Messages = () => {
     useEffect(() => {
         function checkMatchUserId() {
             const participants = cookies.CurrentChat.participantsIds;
-            if (cookies.LoggedUserId === participants[0].toString()) {
+            if (loggedUserId === participants[0]) {
                 setMatchedUserId(participants[1])
            } else {
                 setMatchedUserId(participants[0])
@@ -83,13 +84,17 @@ const Messages = () => {
     function showMessageOutput(messageOutput) {
         const message = document.getElementById("message");
         const div = document.createElement('div');
-        if (messageOutput.fromUserId === cookies.LoggedUserId) {
+        if (messageOutput.fromUserId === loggedUserId) {
             console.log("od kogo id " + messageOutput.fromUserId)
-            console.log("logged id "  + cookies.LoggedUserId)
+            console.log("logged id "  + loggedUserId)
+            console.log("od kogo id typ" + typeof messageOutput.fromUserId)
+            console.log("logged id typ "  + typeof loggedUserId)
             div.setAttribute("class", "message-send-div")
         } else {
             console.log("od kogo id " + messageOutput.fromUserId)
-            console.log("logged id "  + cookies.LoggedUserId)
+            console.log("logged id "  + loggedUserId)
+            console.log("od kogo id typ" + typeof messageOutput.fromUserId)
+            console.log("logged id typ "  + typeof loggedUserId)
             div.setAttribute("class", "message-received-div")
         }
 
@@ -102,7 +107,7 @@ const Messages = () => {
     useEffect(() => {
         async function fetchWebSocketTicket() {
             try {
-                let response = await axios.post('http://localhost:8080/ws-ticket?userId=' + cookies.LoggedUserId);
+                let response = await axios.post('http://localhost:8080/ws-ticket?userId=' + loggedUserId);
                 setTicketText(response.data.text)
                 console.log("Ticked fetched.")
             } catch (err) {
@@ -180,7 +185,7 @@ const Messages = () => {
             container.innerHTML = '';
             messages.forEach((element) => {
                 const div = document.createElement("div")
-                if (element.fromUserId.toString() === cookies.LoggedUserId) {
+                if (element.fromUserId === loggedUserId) {
                     div.setAttribute("class", "message-send-div")
                 } else {
                     div.setAttribute("class", "message-received-div")

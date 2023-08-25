@@ -6,7 +6,7 @@ import {useNavigate} from 'react-router-dom'
 
 const UserInfo = () => {
 
-    const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo", "RegisterData"])
+    const [cookies,, removeCookies] = useCookies(["LoggedUserId", "RegisterData"])
     let [cities, setCities] = useState([]);
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState({
@@ -55,7 +55,7 @@ const UserInfo = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
        await axios.post('http://localhost:8080/register', userRegisterDto)
-           .then(r => console.log(r.data))
+           .then(r => removeCookies("RegisterData"))
         navigate('/login');
     };
 

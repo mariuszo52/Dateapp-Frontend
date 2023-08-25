@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
@@ -6,12 +6,11 @@ import enter from "../images/enter.png";
 
 
 function Login() {
-    const [cookies, setCookie] = useCookies(["UserInfo", "LoggedUserId"])
+    const [, setCookie] = useCookies(["UserInfo"])
     const [credentials, setCredentials] = useState({
         email: "",
         password: "",
     });
-    const [, setCookies] = useCookies();
     const navigate = useNavigate();
     const fetchUserInfo = async (token) => {
         try {
