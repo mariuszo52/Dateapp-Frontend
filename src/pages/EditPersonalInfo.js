@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
-import {useNavigate} from "react-router-dom";
-import Cities from "../components/Cities";
 
 
 function EditPersonalInfo() {
     const [cookies, setCookies] = useCookies(["UserInfo"]);
-    const navigate = useNavigate();
     let [cities, setCities] = useState([]);
     const [formData, setFormData] = useState({
         firstName: "",

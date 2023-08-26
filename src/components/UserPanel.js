@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
-const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
+const UserPanel = ({newMessage, newMatch, distance}) => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"])
     const [currentDiv, setCurrentDiv] = useState("matches");
@@ -12,7 +12,6 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
     const [matches, setMatches] = useState([])
     const [chatNotifications, setChatNotifications] = useState({});
     const [unreadChats, setUnreadChats] = useState(0);
-    const [newDistance, setNewDistance] = useState(cookies.UserInfo.maxDistance);
 
 
     async function fetchUserChatNotifications(chatId) {
@@ -23,22 +22,23 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
             console.error(error);
         }
     }
+
     useEffect(() => {
-    async function checkNewMessages() {
-        try {
-            const response = await axios.get('http://localhost:8080/unread-chats');
-            let notificationSpan = document.getElementById("new-message");
-            setUnreadChats(response.data);
-            if(response.data === 0){
-                notificationSpan.setAttribute("hidden", "true")
+        async function checkNewMessages() {
+            try {
+                const response = await axios.get('http://localhost:8080/unread-chats');
+                let notificationSpan = document.getElementById("new-message");
+                setUnreadChats(response.data);
+                if (response.data === 0) {
+                    notificationSpan.setAttribute("hidden", "true")
+                } else {
+                    notificationSpan.removeAttribute("hidden")
+                }
+            } catch (error) {
+                console.error(error);
             }
-            else {
-                notificationSpan.removeAttribute("hidden")
-            }
-        } catch (error) {
-            console.error(error);
         }
-    }
+
         checkNewMessages();
     }, [chatNotifications, newMessage]);
 
@@ -49,9 +49,9 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
             for (const chat of chats) {
                 notificationsData[chat.id] = await fetchUserChatNotifications(chat.id);
                 let notificationSpan = document.getElementById("new-message-".concat(chat.id));
-                if(notificationsData[chat.id] === 0) {
+                if (notificationsData[chat.id] === 0) {
                     notificationSpan?.setAttribute("hidden", "true");
-                }else{
+                } else {
                     notificationSpan?.setAttribute('style', 'color: darkgoldenrod;');
                 }
             }
@@ -60,8 +60,6 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
 
         fetchNotificationsForChats();
     }, [chats]);
-
-
 
 
     useEffect(() => {
@@ -122,8 +120,6 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
         setCookie("profile", profile)
         navigate("/like-profile")
 
-        //dodac zapisywanie do bazy wyboru
-
     }
 
     const handleButtonMessagesClick = async (divId) => {
@@ -145,6 +141,7 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
             console.error(error);
         }
     }
+
     function handleShowChat(chat) {
         setCookie("CurrentChat", chat);
         if (window.location.pathname === "/messages") {
@@ -154,19 +151,12 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
         }
         resetUnreadMessageCount(chat.id).then(r => console.log(r))
     }
-    function lastMessageLimited(lastMessage){
+
+    function lastMessageLimited(lastMessage) {
         return lastMessage.length >= 30 ? lastMessage.slice(0, 29) + "..." : lastMessage;
     }
 
-    const submitDistance =(event) => {
-        event.preventDefault()
-        setNewDistance(event.target.form.distance.value)
-        onDistanceChange(event.target.form.distance.value)
-    }
-    const handleDistanceChange = (event) =>{
-        setNewDistance(event.target.form.distance.value)
 
-    }
 
     return (
         <div className="user-panel">
@@ -174,16 +164,6 @@ const UserPanel = ({newMessage, newMatch, onDistanceChange}) => {
                 <img src={cookies.UserInfo?.url} alt="User" onClick={handleImageClick}/>
                 <h2>{cookies.UserInfo?.firstName}</h2>
             </div>
-            <div>
-                <label>Max distance</label>
-                <form>
-                    <input defaultValue={newDistance}
-                           name="distance" type="range" min="0" max="500" step="10" onChange={handleDistanceChange} />
-                    <input type={"submit"} onClick={submitDistance}/>
-                <h2>Distance: {newDistance}</h2>
-                </form>
-            </div>
-
             <div className="change-section">
                 <button
                     id="matches-button"

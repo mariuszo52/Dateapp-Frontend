@@ -24,6 +24,7 @@
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "web-vitals": "^2.1.4",
+    "webextension-polyfill": "^0.10.0",
     "websocket": "^1.0.34"
   },
   "scripts": {

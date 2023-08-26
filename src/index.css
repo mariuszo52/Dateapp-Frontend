@@ -604,4 +604,10 @@ background-color: inherit;
 .settings-button:hover {
   background-color: #4b4f5a;
 }
+#create-account{
+  color: white;
+}
+#create-account:hover{
+cursor: pointer
+}
 

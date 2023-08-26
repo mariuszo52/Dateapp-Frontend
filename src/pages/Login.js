@@ -27,7 +27,6 @@ function Login() {
         }
     };
 
-
     const handleSubmit = async (event) => {
             event.preventDefault();
         try {
@@ -61,7 +60,7 @@ function Login() {
                            setCredentials({...credentials, password: e.target.value})}/>
                 <input type={"submit"} name={"submit"}></input>
             </form>
-            {sessionStorage.getItem('jwtToken')}
+            <h3 id={"create-account"} onClick={() => navigate("/")}>Create account</h3>
         </div>
     );
 }
