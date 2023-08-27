@@ -4,6 +4,7 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import axios from "axios";
 import UserPanel from "../components/UserPanel";
+import {useNavigate} from "react-router-dom"
 
 const Messages = () => {
     const [cookies] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"]);
@@ -17,7 +18,7 @@ const Messages = () => {
     const [matchedUserId, setMatchedUserId] = useState(null);
     const [newMessage, setNewMessage] = useState(0)
     const [loggedUserId] = useState(parseInt(cookies.LoggedUserId))
-
+    const navigate = useNavigate();
     async function getChatNotificationsCounter() {
         try {
             let response = await axios.get('http://localhost:8080/notifications-counter?chatId='
@@ -69,7 +70,8 @@ const Messages = () => {
         async function getMatchedUserInfo() {
             try {
                 let response =
-                    await axios.get('http://localhost:8080/matched-user-info?userId='.concat(matchedUserId));
+                    await axios.get('http://localhost:8080/matched-user-info?userId=' + (matchedUserId)
+                        +"&chatId=" + cookies.CurrentChat.id);
                 setMatchedUserInfo(response.data);
             } catch (err) {
                 console.log(err);
@@ -85,16 +87,8 @@ const Messages = () => {
         const message = document.getElementById("message");
         const div = document.createElement('div');
         if (messageOutput.fromUserId === loggedUserId) {
-            console.log("od kogo id " + messageOutput.fromUserId)
-            console.log("logged id "  + loggedUserId)
-            console.log("od kogo id typ" + typeof messageOutput.fromUserId)
-            console.log("logged id typ "  + typeof loggedUserId)
             div.setAttribute("class", "message-send-div")
         } else {
-            console.log("od kogo id " + messageOutput.fromUserId)
-            console.log("logged id "  + loggedUserId)
-            console.log("od kogo id typ" + typeof messageOutput.fromUserId)
-            console.log("logged id typ "  + typeof loggedUserId)
             div.setAttribute("class", "message-received-div")
         }
 
@@ -206,6 +200,13 @@ const Messages = () => {
         }
     });
 
+    function deletePairButtonClick() {
+        axios.put("http://localhost:8080/unmatch?chatId=" + cookies.CurrentChat.id)
+            .then(r=> console.log("Pair deleted correctly"),
+                reason => console.log(reason))
+        navigate("/dashboard")
+    }
+
     return (
         <div className="dashboard">
             <UserPanel newMessage={newMessage} />
@@ -217,6 +218,7 @@ const Messages = () => {
                             <p>
                                 You matched with {matchedUserInfo?.firstName} on {cookies.CurrentChat?.matchDate}
                             </p>
+                            <button onClick={deletePairButtonClick} className={"login-button"}>Delete Pair</button>
                         </div>
                         <div id={"message"}></div>
 

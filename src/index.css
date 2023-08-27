@@ -25,6 +25,9 @@ h2 {
   border-radius: 30px;
   border: none;
 }
+.login-button:hover {
+  cursor: pointer;
+}
 
 .primary-button:hover {
   background: linear-gradient(260deg, rgb(254, 48, 114), rgb(255, 89, 64));

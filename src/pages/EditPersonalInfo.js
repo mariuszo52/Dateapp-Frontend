@@ -1,94 +1,73 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
+import {useNavigate} from "react-router-dom";
 
 
 function EditPersonalInfo() {
     const [cookies, setCookies] = useCookies(["UserInfo"]);
     let [cities, setCities] = useState([]);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        firstName: "",
-        locationDto: {
-            name: "",
-            latitude:"",
-            longitude:"",
-            country: ""
-        },
-        dayOfBirth: "",
-        monthOfBirth: "",
-        yearOfBirth: "",
-        genderIdentity: "man",
-        genderInterest: "woman",
-        url: "",
-        about: "",
-        userId: cookies.LoggedUserId
+        firstName: cookies.UserInfo.firstName,
+        locationName: cookies.UserInfo.locationDto?.name,
+        locationLatitude: cookies.UserInfo.locationDto?.latitude,
+        locationLongitude: cookies.UserInfo.locationDto?.longitude,
+        locationCountry: cookies.UserInfo.locationDto?.country,
+        dayOfBirth: cookies.UserInfo.dayOfBirth,
+        monthOfBirth: cookies.UserInfo.monthOfBirth,
+        yearOfBirth: cookies.UserInfo.yearOfBirth,
+        url: cookies.UserInfo.url,
+        about: cookies.UserInfo.about,
     });
 
     const handleChange = (e) => {
-        const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        const value = e.target.value;
         const name = e.target.name;
-
-        if (name.startsWith("locationDto.")) {
-            const locationDtoField = name.split(".")[1];
-            setFormData((prevState) => ({
-                ...prevState,
-                locationDto: {
-                    ...prevState.locationDto,
-                    [locationDtoField]: value,
-                },
-            }));
-        } else {
             setFormData((prevState) => ({
                 ...prevState,
                 [name]: value,
             }));
-        }
     };
 
     useEffect(() => {
             function getCities() {
-                console.log(formData.locationDto.name)
+                console.log(formData.locationName)
 
                 const headers = {
                     'X-Api-Key': '2NSMNHamzZBFVHUZo/9kIg==B4ZUziZJPNlfUP7Z'
                 }
-                axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + formData.locationDto.name, {headers: headers})
+                axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + formData.locationName, {headers: headers})
                     .then(r => {
                         setCities(r.data)
-
                         setFormData(prevFormData => ({
                             ...prevFormData,
-                            locationDto: {
-                                ...prevFormData.locationDto,
-                                latitude: r.data[0].latitude,
-                                longitude: r.data[0].longitude,
-                                country: r.data[0].country
-                            }
+                                latitude: r.data[0]?.latitude,
+                                longitude: r.data[0]?.longitude,
+                                country: r.data[0]?.country
                         }));
-                    })}
+                    })
+
+            }
 
 
-
-            if (formData.locationDto.name?.length >= 3) {
+            if (formData.locationName?.length >= 3) {
                 getCities()
             }
-        }, [formData.locationDto.name]
+        }, [formData.locationName]
     );
 
 
     const handleSubmit = (event) => {
         event.preventDefault();
         axios
-            .post("http://localhost:8080/userinfo", formData)
-            .then((response) => {
-                setCookies("UserInfo", formData);
-                window.location.href = "/login";
-            })
+            .put("http://localhost:8080/user-info-edit", formData)
+            .then()
             .catch((error) => {
                 console.log(error);
             });
+        navigate("/profile")
     };
-
 
 
     return (
@@ -103,15 +82,15 @@ function EditPersonalInfo() {
                         value={formData.firstName}
                         onChange={handleChange}
                     />
-                    <label htmlFor="locationDtoName">location</label>
+                    <label htmlFor="locationName">location</label>
                     <input
                         type="text"
                         placeholder="Warsaw"
-                        id="locationDtoName"
-                        name="locationDto.name"
+                        id="locationName"
+                        name="locationName"
                         list="locationDto-list"
                         required={true}
-                        value={formData.locationDto.name}
+                        value={formData.locationName}
                         onChange={handleChange}
                     />
                     <datalist id="locationDto-list">
