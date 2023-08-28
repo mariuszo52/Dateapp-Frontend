@@ -42,9 +42,9 @@ function EditPersonalInfo() {
                         setCities(r.data)
                         setFormData(prevFormData => ({
                             ...prevFormData,
-                                latitude: r.data[0]?.latitude,
-                                longitude: r.data[0]?.longitude,
-                                country: r.data[0]?.country
+                                locationLatitude: r.data[0]?.latitude,
+                                locationLongitude: r.data[0]?.longitude,
+                                locationCountry: r.data[0]?.country
                         }));
                     })
 
