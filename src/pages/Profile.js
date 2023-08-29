@@ -50,6 +50,15 @@ const Profile = () => {
         };
         fetchUserInfo()
     }, [distance]);
+
+    function handlePasswordChangeButton() {
+        navigate("/new-password")
+    }
+
+    function handleDeleteAccountButton() {
+        navigate("/delete-account")
+    }
+
     return (
         <div className="dashboard">
             <div className={"settings-container"}>
@@ -63,13 +72,13 @@ const Profile = () => {
                     <input id={"distance"} defaultValue={cookies.UserInfo.maxDistance}
                            name="distance" type="range" min="0" max="500" step="10" onChange={handleDistanceChange}/>
                     <hr></hr>
-                    <button onClick={handlePersonalInfoButton} className={"settings-button"}>Personal Info</button>
+                    <button onClick={handlePersonalInfoButton} className={"settings-button"}>Personal info</button>
                     <hr></hr>
-                    <h2>Password</h2>
+                    <button onClick={handlePasswordChangeButton} className={"settings-button"}>Change password</button>
                     <hr></hr>
                     <button onClick={handleLogout} className={"settings-button"}>Logout</button>
                     <hr></hr>
-                    <h2>Delete account</h2>
+                    <button onClick={handleDeleteAccountButton} className={"settings-button"}>Delete account</button>
                 </div>
             </div>
             <div className={"card-container"}>
