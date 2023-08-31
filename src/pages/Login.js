@@ -28,18 +28,18 @@ function Login() {
     };
 
     const handleSubmit = async (event) => {
-            event.preventDefault();
+        event.preventDefault();
         try {
-                const response = await axios.post(`http://localhost:8080/login`, credentials);
-                let success = response.status === 201;
-                if(success) {
-                    const token = 'Bearer '.concat(response.data)
-                    fetchUserInfo(token);
-                    sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data));
-                }
-            } catch (error) {
-                console.error(error);
+            const response = await axios.post(`http://localhost:8080/login`, credentials);
+            let success = response.status === 201;
+            if (success) {
+                const token = 'Bearer '.concat(response.data)
+                fetchUserInfo(token);
+                sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data));
             }
+        } catch (error) {
+            console.error(error);
+        }
 
     };
 

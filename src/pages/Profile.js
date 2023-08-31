@@ -7,7 +7,7 @@ import axios from "axios";
 
 const Profile = () => {
     const navigate = useNavigate();
-    const [cookies,setCookies, removeCookies] =
+    const [cookies, setCookies, removeCookies] =
         useCookies(["UserInfo", "LoggedUserId", "CurrentChat"]);
     const [distance, setDistance] = useState(cookies.UserInfo.maxDistance);
 
@@ -36,7 +36,9 @@ const Profile = () => {
     const handleDistanceChange = (event) => {
         const distance = document.getElementById("distance").value
         setDistance(distance)
-        axios.put('http://localhost:8080/distance?distance=' + distance)
+        axios.put('http://localhost:8080/distance', null, {
+            params: distance
+        })
     }
 
     useEffect(() => {

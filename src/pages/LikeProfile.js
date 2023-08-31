@@ -1,5 +1,4 @@
-
-import { useCookies } from "react-cookie";
+import {useCookies} from "react-cookie";
 import UserPanel from "../components/UserPanel";
 
 
@@ -8,7 +7,7 @@ const LikeProfile = () => {
     return (
         <div className="dashboard">
 
-            <UserPanel />
+            <UserPanel/>
             <div className={"card-container"}>
                 <div className={"profile-card"}>
                     <img src={cookies.profile.url} alt={"User"}/>

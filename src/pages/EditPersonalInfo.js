@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 
 
 function EditPersonalInfo() {
-    const [cookies, setCookies] = useCookies(["UserInfo"]);
+    const [cookies] = useCookies(["UserInfo"]);
     let [cities, setCities] = useState([]);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -24,10 +24,10 @@ function EditPersonalInfo() {
     const handleChange = (e) => {
         const value = e.target.value;
         const name = e.target.name;
-            setFormData((prevState) => ({
-                ...prevState,
-                [name]: value,
-            }));
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
 
     useEffect(() => {
@@ -42,9 +42,9 @@ function EditPersonalInfo() {
                         setCities(r.data)
                         setFormData(prevFormData => ({
                             ...prevFormData,
-                                locationLatitude: r.data[0]?.latitude,
-                                locationLongitude: r.data[0]?.longitude,
-                                locationCountry: r.data[0]?.country
+                            locationLatitude: r.data[0]?.latitude,
+                            locationLongitude: r.data[0]?.longitude,
+                            locationCountry: r.data[0]?.country
                         }));
                     })
 

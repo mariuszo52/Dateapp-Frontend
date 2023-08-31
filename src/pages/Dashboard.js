@@ -74,14 +74,6 @@ const Dashboard = () => {
         }
     };
 
-    const submitDistance = (event) => {
-        event.preventDefault()
-        const distance = event.target.form.distance.value
-        axios.put('http://localhost:8080/distance?distance=' + distance).then(() => fetchUsersToSwipe())
-        window.location.reload()
-
-    }
-
     return (
         <div className="dashboard">
             <UserPanel newMatch={newMatch}/>

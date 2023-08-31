@@ -16,7 +16,11 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
 
     async function fetchUserChatNotifications(chatId) {
         try {
-            const response = await axios.get('http://localhost:8080/notifications-counter?chatId=' + chatId);
+            const response = await axios.get('http://localhost:8080/notifications-counter', {
+                params: {
+                    chatId
+                }
+            });
             return response.data
         } catch (error) {
             console.error(error);
@@ -133,8 +137,13 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
 
     async function resetUnreadMessageCount(chatId) {
         try {
-            let response = await axios.put('http://localhost:8080/notifications-counter-reset?chatId='
-                + chatId + "&userId=" + cookies.LoggedUserId);
+            let response = await axios.put('http://localhost:8080/notifications-counter-reset', null,
+                {
+                    params: {
+                        chatId: chatId,
+                        userId: cookies.LoggedUserId
+                    }
+                });
             console.log(response.status)
 
         } catch (error) {
@@ -155,7 +164,6 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
     function lastMessageLimited(lastMessage) {
         return lastMessage.length >= 30 ? lastMessage.slice(0, 29) + "..." : lastMessage;
     }
-
 
 
     return (

@@ -6,15 +6,15 @@ import {useNavigate} from 'react-router-dom'
 
 const UserInfo = () => {
 
-    const [cookies,, removeCookies] = useCookies(["LoggedUserId", "RegisterData"])
+    const [cookies, , removeCookies] = useCookies(["LoggedUserId", "RegisterData"])
     let [cities, setCities] = useState([]);
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState({
         firstName: "",
         locationDto: {
             name: "",
-            latitude:"",
-            longitude:"",
+            latitude: "",
+            longitude: "",
             country: ""
         },
         dayOfBirth: "",
@@ -54,8 +54,8 @@ const UserInfo = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-       await axios.post('http://localhost:8080/register', userRegisterDto)
-           .then(r => removeCookies("RegisterData"))
+        await axios.post('http://localhost:8080/register', userRegisterDto)
+            .then(r => removeCookies("RegisterData"))
         navigate('/login');
     };
 
@@ -80,8 +80,8 @@ const UserInfo = () => {
                                 country: r.data[0]?.country
                             }
                         }))
-                    })}
-
+                    })
+            }
 
 
             if (userInfo.locationDto.name?.length >= 3) {

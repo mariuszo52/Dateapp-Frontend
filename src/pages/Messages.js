@@ -13,16 +13,21 @@ const Messages = () => {
     const [matchedUserInfo, setMatchedUserInfo] = useState();
     const [textArea, setTextArea] = useState("");
     const messageContainerRef = useRef(null);
-    const [,setNotificationCounter] = useState();
+    const [, setNotificationCounter] = useState();
     const [ticketText, setTicketText] = useState("");
     const [matchedUserId, setMatchedUserId] = useState(null);
     const [newMessage, setNewMessage] = useState(0)
     const [loggedUserId] = useState(parseInt(cookies.LoggedUserId))
     const navigate = useNavigate();
+
     async function getChatNotificationsCounter() {
         try {
-            let response = await axios.get('http://localhost:8080/notifications-counter?chatId='
-                + cookies.CurrentChat.id);
+            let response = await axios.get('http://localhost:8080/notifications-counter',
+                {
+                    params: {
+                        chatId: cookies.CurrentChat.id
+                    }
+                });
             setNotificationCounter(response.data);
         } catch (err) {
             console.log(err);
@@ -31,8 +36,12 @@ const Messages = () => {
 
     async function getMessages() {
         try {
-            let response = await axios.get('http://localhost:8080/messages?chatId='
-                .concat(cookies.CurrentChat.id));
+            let response = await axios.get('http://localhost:8080/messages',
+                {
+                    params: {
+                        chatId: cookies.CurrentChat.id
+                    }
+                });
             setMessages(response.data);
         } catch (err) {
             console.log(err);
@@ -59,10 +68,11 @@ const Messages = () => {
             const participants = cookies.CurrentChat.participantsIds;
             if (loggedUserId === participants[0]) {
                 setMatchedUserId(participants[1])
-           } else {
+            } else {
                 setMatchedUserId(participants[0])
             }
         }
+
         checkMatchUserId();
     }, []);
 
@@ -70,14 +80,19 @@ const Messages = () => {
         async function getMatchedUserInfo() {
             try {
                 let response =
-                    await axios.get('http://localhost:8080/matched-user-info?userId=' + (matchedUserId)
-                        +"&chatId=" + cookies.CurrentChat.id);
+                    await axios.get('http://localhost:8080/matched-user-info', {
+                        params:{
+                            userId: matchedUserId,
+                            chatId: cookies.CurrentChat.id
+                        }
+                    });
                 setMatchedUserInfo(response.data);
             } catch (err) {
                 console.log(err);
             }
         }
-        if(matchedUserId != null) {
+
+        if (matchedUserId != null) {
             getMatchedUserInfo();
         }
 
@@ -101,21 +116,27 @@ const Messages = () => {
     useEffect(() => {
         async function fetchWebSocketTicket() {
             try {
-                let response = await axios.post('http://localhost:8080/ws-ticket?userId=' + loggedUserId);
+                let response = await axios.post('http://localhost:8080/ws-ticket',null, {
+                    params:{
+                        userId:cookies.LoggedUserId
+                    }});
                 setTicketText(response.data.text)
                 console.log("Ticked fetched.")
             } catch (err) {
                 console.log(err)
             }
         }
+
         fetchWebSocketTicket()
     }, []);
 
 
-        async function updateChatNotificationsCounter() {
+    async function updateChatNotificationsCounter() {
         try {
-             await axios.put('http://localhost:8080/notifications-counter?chatId='
-                + cookies.CurrentChat.id);
+            await axios.put('http://localhost:8080/notifications-counter', null, {
+                params:{
+                    chatId:cookies.CurrentChat.id
+                }});
         } catch (err) {
             console.log(err);
         }
@@ -201,15 +222,18 @@ const Messages = () => {
     });
 
     function deletePairButtonClick() {
-        axios.put("http://localhost:8080/unmatch?chatId=" + cookies.CurrentChat.id)
-            .then(r=> console.log("Pair deleted correctly"),
+        axios.put("http://localhost:8080/unmatch", null, {
+            params:{
+                chatId:cookies.CurrentChat.id
+            }})
+            .then(r => console.log("Pair deleted correctly"),
                 reason => console.log(reason))
         navigate("/dashboard")
     }
 
     return (
         <div className="dashboard">
-            <UserPanel newMessage={newMessage} />
+            <UserPanel newMessage={newMessage}/>
             <div className="messenger-container">
                 <div className={"mess"}>
                     <div className={"messages-container"} ref={messageContainerRef}>
