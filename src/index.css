@@ -123,6 +123,8 @@ nav .logo-container .logo {
   border-radius: 4px;
 }
 .onboarding {
+  width: 100vw;
+  height: 100vh;
   border-top: solid 1px rgb(213, 213, 213);
   background-image: url("images/background.jpg");
   color: white;
