@@ -36,9 +36,9 @@ const Profile = () => {
     const handleDistanceChange = (event) => {
         const distance = document.getElementById("distance").value
         setDistance(distance)
-        axios.put('http://localhost:8080/distance', null, {
-            params: distance
-        })
+        axios.put('http://localhost:8080/distance', null, {params:{
+            distance
+            }})
     }
 
     useEffect(() => {

@@ -13,10 +13,11 @@ function PasswordChange() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await axios.put("http://localhost:8080/new-password", null, { params: {
-                oldPassword,
-                newPassword
-            }})
+        const data ={
+            oldPassword,
+            newPassword
+        }
+        await axios.put("http://localhost:8080/new-password", data)
             .then(r => console.log(r))
             .catch(reason => console.log(reason))
         navigate("/profile")
