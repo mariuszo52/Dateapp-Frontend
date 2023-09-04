@@ -23,7 +23,7 @@ function DeleteAccount() {
                 password
             }})
             .then(r => console.log(r))
-            .catch(reason => console.log(reason))
+            .catch(error => console.log(error))
         logout()
         navigate("/")
     };

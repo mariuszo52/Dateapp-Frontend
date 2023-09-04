@@ -8,6 +8,7 @@ const UserInfo = () => {
 
     const [cookies, , removeCookies] = useCookies(["LoggedUserId", "RegisterData"])
     let [cities, setCities] = useState([]);
+    const [notification, setNotification] = useState("");
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState({
         firstName: "",
@@ -70,6 +71,7 @@ const UserInfo = () => {
                 axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + userInfo.locationDto.name, {headers: headers})
                     .then(r => {
                         setCities(r.data)
+                        r.data.length === 0 ? setNotification("City not found. Please select location from list.") : setNotification(null)
                         console.log(r.data)
                         setUserInfo(prevuserInfo => ({
                             ...prevuserInfo,
@@ -93,6 +95,7 @@ const UserInfo = () => {
     return (
         <>
             <div className="onboarding">
+                {notification &&(<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
                 <form onSubmit={handleSubmit}>
                     <section>
                         <label htmlFor="firstName">First Name</label>
@@ -104,6 +107,7 @@ const UserInfo = () => {
                             required={true}
                             value={userInfo.firstName}
                             onChange={handleChange}
+                            minLength={1}
                         />
                         <label htmlFor="locationDtoName">location</label>
                         <input
@@ -115,6 +119,7 @@ const UserInfo = () => {
                             required={true}
                             value={userInfo.locationDto.name}
                             onChange={handleChange}
+                            minLength={1}
                         />
                         <datalist id="locationDto-list">
                             {cities.map((city, index) => (
@@ -131,6 +136,8 @@ const UserInfo = () => {
                                 required={true}
                                 value={userInfo.dayOfBirth}
                                 onChange={handleChange}
+                                min={1}
+                                max={31}
                             />
 
                             <input
@@ -141,6 +148,8 @@ const UserInfo = () => {
                                 required={true}
                                 value={userInfo.monthOfBirth}
                                 onChange={handleChange}
+                                min={1}
+                                max={12}
                             />
 
                             <input
@@ -151,6 +160,8 @@ const UserInfo = () => {
                                 required={true}
                                 value={userInfo.yearOfBirth}
                                 onChange={handleChange}
+                                min={1950}
+                                max={2005}
                             />
                         </div>
 
@@ -209,9 +220,11 @@ const UserInfo = () => {
                             placeholder="I like long walks..."
                             value={userInfo.about}
                             onChange={handleChange}
+                            minLength={1}
+                            maxLength={1000}
                         />
 
-                        <input type="submit"/>
+                        {!notification && (<input type="submit"/>)}
                     </section>
 
                     <section>

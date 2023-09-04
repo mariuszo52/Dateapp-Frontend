@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
-const UserPanel = ({newMessage, newMatch, distance}) => {
+const UserPanel = ({newMessage, newMatch, setNotification}) => {
     const navigate = useNavigate();
     const [cookies, setCookie] = useCookies(["LoggedUserId", "UserInfo", "CurrentChat"])
     const [currentDiv, setCurrentDiv] = useState("matches");
@@ -23,6 +23,7 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
             });
             return response.data
         } catch (error) {
+            setNotification(prevState => prevState + " Error during loading chat notifications.")
             console.error(error);
         }
     }
@@ -39,6 +40,7 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
                     notificationSpan.removeAttribute("hidden")
                 }
             } catch (error) {
+                setNotification(prevState => prevState + " Error during checking unread messages.")
                 console.error(error);
             }
         }
@@ -72,6 +74,7 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
                 let response = await axios.get('http://localhost:8080/all-matches');
                 setMatches(() => response.data)
             } catch (error) {
+                setNotification(prevState => prevState + " Error during loading matches.")
                 console.error(error);
             }
         };
@@ -83,7 +86,8 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
             let response = await axios.get('http://localhost:8080/all-user-chats');
             setChats(response.data)
         } catch (error) {
-            console.error("Error loading chats:", error);
+            setNotification(prevState => prevState + " Error during loading chats.")
+            console.error(error);
         }
     };
 
@@ -99,6 +103,8 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
             console.log(response.data)
             setLikes(response.data)
         } catch (error) {
+            setNotification(prevState => prevState + " Error during loading user likes.")
+
             console.error(error);
         }
         for (const buttons of document.getElementsByClassName("section-button")) {
@@ -137,17 +143,15 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
 
     async function resetUnreadMessageCount(chatId) {
         try {
-            let response = await axios.put('http://localhost:8080/notifications-counter-reset', null,
+            await axios.put('http://localhost:8080/notifications-counter-reset', null,
                 {
                     params: {
                         chatId: chatId,
                         userId: cookies.LoggedUserId
                     }
                 });
-            console.log(response.status)
-
         } catch (error) {
-            console.error(error);
+            console.error("Notifications counter reset error" + error);
         }
     }
 
@@ -158,7 +162,9 @@ const UserPanel = ({newMessage, newMatch, distance}) => {
         } else {
             navigate("/messages");
         }
-        resetUnreadMessageCount(chat.id).then(r => console.log(r))
+        resetUnreadMessageCount(chat.id)
+            .then(r => console.log("Chat loaded " + r))
+            .catch(err => console.log(err))
     }
 
     function lastMessageLimited(lastMessage) {

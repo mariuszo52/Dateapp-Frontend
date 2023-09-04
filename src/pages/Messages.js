@@ -19,6 +19,7 @@ const Messages = () => {
     const [newMessage, setNewMessage] = useState(0)
     const [loggedUserId] = useState(parseInt(cookies.LoggedUserId))
     const navigate = useNavigate();
+    const [notification, setNotification] = useState("");
 
     async function getChatNotificationsCounter() {
         try {
@@ -44,6 +45,7 @@ const Messages = () => {
                 });
             setMessages(response.data);
         } catch (err) {
+            setNotification("Error during loading messages.")
             console.log(err);
         }
     }
@@ -81,13 +83,14 @@ const Messages = () => {
             try {
                 let response =
                     await axios.get('http://localhost:8080/matched-user-info', {
-                        params:{
+                        params: {
                             userId: matchedUserId,
                             chatId: cookies.CurrentChat.id
                         }
                     });
                 setMatchedUserInfo(response.data);
             } catch (err) {
+                setNotification("Error during loading user information.")
                 console.log(err);
             }
         }
@@ -116,10 +119,11 @@ const Messages = () => {
     useEffect(() => {
         async function fetchWebSocketTicket() {
             try {
-                let response = await axios.post('http://localhost:8080/ws-ticket',null, {
-                    params:{
-                        userId:cookies.LoggedUserId
-                    }});
+                let response = await axios.post('http://localhost:8080/ws-ticket', null, {
+                    params: {
+                        userId: cookies.LoggedUserId
+                    }
+                });
                 setTicketText(response.data.text)
                 console.log("Ticked fetched.")
             } catch (err) {
@@ -134,9 +138,10 @@ const Messages = () => {
     async function updateChatNotificationsCounter() {
         try {
             await axios.put('http://localhost:8080/notifications-counter', null, {
-                params:{
-                    chatId:cookies.CurrentChat.id
-                }});
+                params: {
+                    chatId: cookies.CurrentChat.id
+                }
+            });
         } catch (err) {
             console.log(err);
         }
@@ -187,6 +192,7 @@ const Messages = () => {
                 setTextArea("");
                 await updateChatNotificationsCounter();
             } catch (err) {
+                setNotification("Error during sending message.")
                 console.log(err)
             }
         }
@@ -223,16 +229,21 @@ const Messages = () => {
 
     function deletePairButtonClick() {
         axios.put("http://localhost:8080/unmatch", null, {
-            params:{
-                chatId:cookies.CurrentChat.id
-            }})
+            params: {
+                chatId: cookies.CurrentChat.id
+            }
+        })
             .then(r => console.log("Pair deleted correctly"),
-                reason => console.log(reason))
+                reason => {
+                    setNotification("Deleting pair failed")
+                    console.log(reason)
+                })
         navigate("/dashboard")
     }
 
     return (
         <div className="dashboard">
+            {notification && (<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
             <UserPanel newMessage={newMessage}/>
             <div className="messenger-container">
                 <div className={"mess"}>

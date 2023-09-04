@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
@@ -12,6 +12,8 @@ function Login() {
         password: "",
     });
     const navigate = useNavigate();
+    const [notification, setNotification] = useState("")
+
     const fetchUserInfo = async (token) => {
         try {
             let config = {
@@ -38,6 +40,7 @@ function Login() {
                 sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data));
             }
         } catch (error) {
+            setNotification("Bad credentials.")
             console.error(error);
         }
 
@@ -45,6 +48,7 @@ function Login() {
 
     return (
         <div className={'login-page'}>
+            {notification && (<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
             <img src={enter} alt={"login"}></img>
             <h1>Log in to your account</h1>
             <form onSubmit={handleSubmit} className={"register-form"}>

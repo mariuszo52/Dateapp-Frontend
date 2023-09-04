@@ -10,6 +10,8 @@ const Profile = () => {
     const [cookies, setCookies, removeCookies] =
         useCookies(["UserInfo", "LoggedUserId", "CurrentChat"]);
     const [distance, setDistance] = useState(cookies.UserInfo.maxDistance);
+    const [notification, setNotification] = useState("")
+
 
     function handleClick() {
         navigate("/dashboard")
@@ -33,12 +35,15 @@ const Profile = () => {
 
     }
 
-    const handleDistanceChange = (event) => {
+    const handleDistanceChange = () => {
         const distance = document.getElementById("distance").value
         setDistance(distance)
         axios.put('http://localhost:8080/distance', null, {params:{
             distance
-            }})
+            }}).then(r => console.log(r.data))
+            .catch(reason =>{
+                setNotification("Error during changing distance.")
+            console.log(reason)})
     }
 
     useEffect(() => {
@@ -84,6 +89,7 @@ const Profile = () => {
                 </div>
             </div>
             <div className={"card-container"}>
+                {notification && (<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
                 <div className={"profile-card"}>
                     <img src={cookies.UserInfo?.url} alt={"User"}/>
                     <p>{cookies.UserInfo?.firstName} <span>{cookies.UserInfo?.age}</span></p>

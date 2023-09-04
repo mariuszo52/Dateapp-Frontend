@@ -15,6 +15,10 @@ h2 {
   font-family: 'Readex Pro', sans-serif;
 
 }
+.main-div{
+  display: flex;
+  flex-direction: column;
+}
 
 .login-button {
   color: rgb(255,255,255);
@@ -114,13 +118,16 @@ nav .logo-container .logo {
   color: rgb(255, 255, 255);
 }
 .notification {
+  margin-top: 0;
+  position: absolute;
+  top: 0;
   font-weight: bold;
-  background-color: #f8f8f8;
+  background-color: darkgoldenrod;
   color: #333;
-  border: 1px solid #ccc;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
+  width:100%
 }
 .onboarding {
   width: 100vw;
@@ -128,6 +135,7 @@ nav .logo-container .logo {
   border-top: solid 1px rgb(213, 213, 213);
   background-image: url("images/background.jpg");
   color: white;
+  overflow-y: auto;
 
 }
 

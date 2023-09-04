@@ -4,7 +4,7 @@ import {useCookies} from "react-cookie";
 
 
 function RegisterForm() {
-    const [notification, setNotification] = useState(false);
+    const [notification, setNotification] = useState("");
     const [, setCookie] = useCookies();
     const [formData, setFormData] = useState({
         email: "",
@@ -21,19 +21,12 @@ function RegisterForm() {
 
     const handleConfirmPassword = (event) => {
             setFormData({...formData, confirmPassword: event.target.value})
-            if(formData.password !== event.target.value){
-                setNotification(true)
-            }
-            else {
-                setNotification(false)
-            }
-
-
+            formData.password !== event.target.value ? setNotification("Passwords not match.") : setNotification(null)
     }
 
     return (
         <>
-        {notification && (<h2 id={"notification"} className={"notification"}>Hasla sie roznia</h2>)}
+        {notification && (<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
             <form onSubmit={handleSubmit} className={"register-form"}>
                 <label>Email</label>
                 <input type={"email"} name={"email"}

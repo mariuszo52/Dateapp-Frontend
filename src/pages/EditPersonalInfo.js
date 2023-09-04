@@ -8,6 +8,7 @@ function EditPersonalInfo() {
     const [cookies] = useCookies(["UserInfo"]);
     let [cities, setCities] = useState([]);
     const navigate = useNavigate();
+    const [notification, setNotification] = useState("");
     const [formData, setFormData] = useState({
         firstName: cookies.UserInfo.firstName,
         locationName: cookies.UserInfo.locationDto?.name,
@@ -40,6 +41,7 @@ function EditPersonalInfo() {
                 axios.get('https://api.api-ninjas.com/v1/city?limit=5&name=' + formData.locationName, {headers: headers})
                     .then(r => {
                         setCities(r.data)
+                        r.data.length === 0 ? setNotification("City not found. Please select location from list.") : setNotification(null)
                         setFormData(prevFormData => ({
                             ...prevFormData,
                             locationLatitude: r.data[0]?.latitude,
@@ -62,8 +64,9 @@ function EditPersonalInfo() {
         event.preventDefault();
         axios
             .put("http://localhost:8080/user-info-edit", formData)
-            .then()
+            .then((r) => setNotification("User info edited."))
             .catch((error) => {
+                setNotification("User info edit failed.")
                 console.log(error);
             });
         navigate("/profile")
@@ -72,6 +75,7 @@ function EditPersonalInfo() {
 
     return (
         <div className={'onboarding'}>
+            {notification &&(<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
             <form onSubmit={handleSubmit}>
                 <section>
                     <label htmlFor="firstName">First Name</label>
@@ -81,6 +85,7 @@ function EditPersonalInfo() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
+                        minLength={3}
                     />
                     <label htmlFor="locationName">location</label>
                     <input
@@ -92,6 +97,7 @@ function EditPersonalInfo() {
                         required={true}
                         value={formData.locationName}
                         onChange={handleChange}
+                        minLength={3}
                     />
                     <datalist id="locationDto-list">
                         {cities.map((city, index) => (
@@ -136,14 +142,15 @@ function EditPersonalInfo() {
                     </div>
                     <label htmlFor="about">About me</label>
                     <input
+                        minLength={1}
+                        maxLength={1000}
                         id="about"
                         type="text"
                         name="about"
                         value={formData.about}
                         onChange={handleChange}
                     />
-
-                    <input type="submit"/>
+                    {!notification && (<input type="submit"/>)}
                 </section>
 
                 <section>

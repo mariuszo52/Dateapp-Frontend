@@ -9,9 +9,8 @@ const Dashboard = () => {
     const [cards, setCards] = useState([]);
     const [cookies, setCookies] = useCookies(["LoggedUserId", "UserInfo"]);
     const [newMatch, setNewMatch] = useState(false)
-    const [distance, setDistance] = useState(cookies.UserInfo.maxDistance);
-
-
+    const [distance] = useState(cookies.UserInfo.maxDistance);
+    const [notification, setNotification] = useState("")
 
 
     useEffect(() => {
@@ -19,7 +18,7 @@ const Dashboard = () => {
             try {
                 let response = await axios.get('http://localhost:8080/logged-user-id');
                 setCookies("LoggedUserId", response.data)
-            }catch (error){
+            } catch (error) {
                 console.log(error)
             }
         };
@@ -31,6 +30,7 @@ const Dashboard = () => {
             const response = await axios.get(`http://localhost:8080/get-swipe-users?distance=` + distance);
             setCards(response.data);
         } catch (error) {
+            setNotification("Error during loading cards.")
             console.error(error);
         }
     };
@@ -47,21 +47,26 @@ const Dashboard = () => {
             const response = await axios.post("http://localhost:8080/swipe-left", data);
             console.log(response.data);
         } catch (error) {
+            setNotification("Left swipe failed.")
             console.error(error);
         }
     };
 
-    function saveRightSwipe(swipedProfileId){
+    function saveRightSwipe(swipedProfileId) {
         setNewMatch(false)
-            const data = {
-                userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
-            };
-            axios.post("http://localhost:8080/swipe-right", data)
-                .then(response =>{
-                    if (response.data === "match") {
-                alert("It's a match!!")
-                setNewMatch(true)
-                }})
+        const data = {
+            userId: cookies.LoggedUserId, swipedProfileId: swipedProfileId,
+        };
+        axios.post("http://localhost:8080/swipe-right", data)
+            .then(response => {
+                if (response.data === "match") {
+                    alert("It's a match!!")
+                    setNewMatch(true)
+                }
+            }).catch(error => {
+                console.log(error)
+                setNotification("Right swipe failed.")
+        })
 
     }
 
@@ -75,28 +80,30 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard">
-            <UserPanel newMatch={newMatch}/>
-            <div className="card-container">
-                {cards?.map((user) => (
-                    <TinderCard
-                        className="swipe"
-                        key={user.userId}
-                        onSwipe={(dir) => swiped(dir, user.userId)}
-                        preventSwipe={["up", "down"]}
-                    >
-                <div
-                    style={{
-                        backgroundImage: `url(${user.url})`
-                    }}
-                    className="card"
-                >
-                    <h2>{user.firstName} {user.age}</h2>
-                    <p>{user.about}</p>
+            <div className="dashboard">
+                <UserPanel newMatch={newMatch} setNotification={setNotification}/>
+                <div className="card-container">
+                    {notification && (<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
+                    {cards?.map((user) => (
+                        <TinderCard
+                            className="swipe"
+                            key={user.userId}
+                            onSwipe={(dir) => swiped(dir, user.userId)}
+                            preventSwipe={["up", "down"]}
+                        >
+                            <div
+                                style={{
+                                    backgroundImage: `url(${user.url})`
+                                }}
+                                className="card"
+                            >
+                                <h2>{user.firstName} {user.age} {user.locationName}</h2>
+                                <p>{user.about}</p>
+                            </div>
+                        </TinderCard>))}
                 </div>
-            </TinderCard>))}
-        </div>
-    </div>);
+            </div>
+    );
 }
 
 export default Dashboard;

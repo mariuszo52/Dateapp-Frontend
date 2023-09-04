@@ -6,7 +6,6 @@ const LikeProfile = () => {
     let [cookies] = useCookies(["profile"]);
     return (
         <div className="dashboard">
-
             <UserPanel/>
             <div className={"card-container"}>
                 <div className={"profile-card"}>
