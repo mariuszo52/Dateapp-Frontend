@@ -76,7 +76,7 @@ function EditPersonalInfo() {
     return (
         <div className={'onboarding'}>
             {notification &&(<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
-            <form onSubmit={handleSubmit}>
+            <form className={"personal-info-form"} onSubmit={handleSubmit}>
                 <section>
                     <label htmlFor="firstName">First Name</label>
                     <input

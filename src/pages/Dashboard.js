@@ -79,7 +79,29 @@ const Dashboard = () => {
         }
     };
 
+    function handleClickMenuButton() {
+        let userPanel = document.getElementsByClassName("user-panel").item(0);
+        let container = document.getElementsByClassName("card-container").item(0);
+        let menuButton = document.getElementById("menu-button");
+        if(window.getComputedStyle(container).display === "flex"){
+            container.style.display = "none"
+            userPanel.style.display = "flex"
+            userPanel.style.width = "100%"
+            menuButton.innerText = "Show cards"
+
+        }
+        else if(window.getComputedStyle(container).display === "none"){
+            container.style.display = "flex"
+            userPanel.style.display = "none"
+            menuButton.innerText = "Show User panel"
+
+        }
+
+    }
+
     return (
+        <div className={"main-container"}>
+            <button id={"menu-button"} onClick={handleClickMenuButton}>Show User panel</button>
             <div className="dashboard">
                 <UserPanel newMatch={newMatch} setNotification={setNotification}/>
                 <div className="card-container">
@@ -102,6 +124,7 @@ const Dashboard = () => {
                             </div>
                         </TinderCard>))}
                 </div>
+            </div>
             </div>
     );
 }
