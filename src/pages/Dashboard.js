@@ -3,6 +3,7 @@ import UserPanel from "../components/UserPanel";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useCookies} from "react-cookie";
+import jwtDecode from "jwt-decode";
 
 const Dashboard = () => {
     axios.defaults.headers.common['Authorization'] = sessionStorage.getItem("jwtToken");
@@ -11,7 +12,6 @@ const Dashboard = () => {
     const [newMatch, setNewMatch] = useState(false)
     const [distance] = useState(cookies.UserInfo.maxDistance);
     const [notification, setNotification] = useState("")
-
 
     useEffect(() => {
         const fetchLoggedUserId = async () => {
@@ -98,6 +98,7 @@ const Dashboard = () => {
         }
 
     }
+
 
     return (
         <div className={"main-container"}>

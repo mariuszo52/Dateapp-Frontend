@@ -241,6 +241,8 @@ const Messages = () => {
         navigate("/dashboard")
     }
 
+
+
     return (
         <div className="dashboard">
             {notification && (<h3 id={"notification"} className={"notification"}>{notification}</h3>)}
@@ -250,11 +252,13 @@ const Messages = () => {
                     <div className={"messages-container"} ref={messageContainerRef}>
                         <div className={"match-info"}>
                             <img src={matchedUserInfo?.url} alt={"Match"}></img>
-                            <p>
+                            <p id={"match-info"}>
                                 You matched with {matchedUserInfo?.firstName} on {cookies.CurrentChat?.matchDate}
                             </p>
                             <button onClick={deletePairButtonClick} className={"login-button"}>Delete Pair</button>
+                            <button onClick={() => navigate("/dashboard")} className={"login-button"}>Main page</button>
                         </div>
+
                         <div id={"message"}></div>
 
                     </div>

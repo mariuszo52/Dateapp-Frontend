@@ -168,7 +168,7 @@ const UserPanel = ({newMessage, newMatch, setNotification}) => {
     }
 
     function lastMessageLimited(lastMessage) {
-        return lastMessage.length >= 30 ? lastMessage.slice(0, 29) + "..." : lastMessage;
+        return lastMessage.length >= 32 ? lastMessage.slice(0, 31) + "..." : lastMessage;
     }
 
 

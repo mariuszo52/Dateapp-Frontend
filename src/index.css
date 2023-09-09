@@ -18,9 +18,7 @@ h2 {
     font-family: 'Readex Pro', sans-serif;
 
 }
-.main-container{
-    display: none;
-}
+
 .main-div {
     display: flex;
     flex: 1;
@@ -561,7 +559,7 @@ nav .logo-container .logo {
     color: white;
     position: absolute;
     padding-left: 30px;
-    width: max-content;
+    max-width: 100%;
     padding-top: 40px;
 
 }
@@ -741,8 +739,20 @@ nav .logo-container .logo {
     margin: auto;
     text-align: center;
     justify-content: center;
-
 }
+.user-panel{
+    display: none;
+}
+.message-profile{
+    display: none;
+}
+.messenger-container{
+    width: 100%;
+}
+#match-info{
+    display: none;
+}
+
 
 
 }

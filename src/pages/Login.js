@@ -35,9 +35,10 @@ function Login() {
             const response = await axios.post(`http://localhost:8080/login`, credentials);
             let success = response.status === 201;
             if (success) {
-                const token = 'Bearer '.concat(response.data)
+                const token = 'Bearer '.concat(response.data[0])
                 fetchUserInfo(token);
-                sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data));
+                sessionStorage.setItem('jwtToken', 'Bearer '.concat(response.data[0]));
+                sessionStorage.setItem('refreshingToken', 'Bearer '.concat(response.data[1]));
             }
         } catch (error) {
             setNotification("Bad credentials.")
