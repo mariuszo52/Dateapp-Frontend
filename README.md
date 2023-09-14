@@ -1,4 +1,4 @@
-# Dateapp-backend
+# Dateapp-Frontend
 Frontend of dateapp made in React.
 
 ![Dateapp](https://i.postimg.cc/BQRG1yY7/Bez-tytu-u.png)
