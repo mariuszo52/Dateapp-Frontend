@@ -14,5 +14,5 @@ How to start?
 * npm start
 
 
-Appilcation should be available on http://localhost:8080/
+Appilcation should be available on http://localhost:3000
 Contact If You have any questions, send me a message at mariuszo19@onet.pl
